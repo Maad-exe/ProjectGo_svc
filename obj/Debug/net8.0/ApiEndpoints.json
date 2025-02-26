@@ -1,0 +1,76 @@
+[
+  {
+    "ContainingType": "backend.Controllers.AuthController",
+    "Method": "Login",
+    "RelativePath": "api/auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "backend.Controllers.LoginDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.AuthController",
+    "Method": "RegisterAdmin",
+    "RelativePath": "api/auth/register/admin",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "backend.Controllers.RegisterAdminDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.AuthController",
+    "Method": "RegisterStudent",
+    "RelativePath": "api/auth/register/student",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "backend.Controllers.RegisterStudentDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.AuthController",
+    "Method": "RegisterTeacher",
+    "RelativePath": "api/auth/register/teacher",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "backend.Controllers.RegisterTeacherDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.AuthController",
+    "Method": "GetAllTeachers",
+    "RelativePath": "api/auth/teachers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  }
+]

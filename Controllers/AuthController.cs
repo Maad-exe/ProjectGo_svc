@@ -1,0 +1,130 @@
+﻿using backend.Core.Entities;
+using backend.Core.Enums;
+using backend.DTOs;
+using backend.Infrastructure.Services.Contracts;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Security.Claims;
+using System.Text.Json;
+
+namespace backend.Controllers
+{
+    [Route("api/auth")]
+    [ApiController]
+    public class AuthController : ControllerBase
+    {
+        private readonly IAuthService _authService;
+
+        public AuthController(IAuthService authService)
+        {
+            _authService = authService;
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto request)
+        {
+            var token = await _authService.AuthenticateAsync(request.Email, request.Password);
+            if (token == null)
+            {
+                return Unauthorized(new { message = "Invalid email or password" });
+            }
+            return Ok(new { token });
+        }
+
+        [HttpPost("register/admin")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterAdminDto request)
+        {
+            var admin = new Admin
+            {
+                FullName = request.FullName,
+                Email = request.Email,
+                PasswordHash = request.Password,
+                Role = UserType.Admin,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _authService.RegisterAdminAsync(admin);
+            return Ok(new { message = "Admin registered successfully" });
+        }
+
+        [HttpPost("register/teacher")]
+        public async Task<IActionResult> RegisterTeacher([FromBody] RegisterTeacherDto request)
+        {
+            var teacher = new Teacher
+            {
+                FullName = request.FullName,
+                Email = request.Email,
+                PasswordHash = request.Password,
+                Role = UserType.Teacher,
+                CreatedAt = DateTime.UtcNow,
+                Qualification = request.Qualification,
+                AreaOfSpecialization = request.AreaOfSpecialization,
+                OfficeLocation = request.OfficeLocation
+            };
+
+            await _authService.RegisterTeacherAsync(teacher);
+            return Ok(new { message = "Teacher registered successfully" });
+        }
+
+        [HttpPost("register/student")]
+        public async Task<IActionResult> RegisterStudent([FromBody] RegisterStudentDto request)
+        {
+            var student = new Student
+            {
+                FullName = request.FullName,
+                Email = request.Email,
+                PasswordHash = request.Password,
+                Role = UserType.Student,
+                CreatedAt = DateTime.UtcNow,
+                EnrollmentNumber = request.EnrollmentNumber,
+                Department = request.Department
+            };
+
+            await _authService.RegisterStudentAsync(student);
+            return Ok(new { message = "Student registered successfully" });
+        }
+
+        [HttpGet("teachers")]
+        public async Task<IActionResult> GetAllTeachers()
+        {
+            var teachers = await _authService.GetAllTeachersAsync();
+            return Ok(teachers);
+        }
+
+    }
+
+
+
+    public class LoginDto
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
+
+    public class RegisterTeacherDto
+    {
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string Qualification { get; set; } = string.Empty;
+        public string AreaOfSpecialization { get; set; } = string.Empty;
+        public string OfficeLocation { get; set; } = string.Empty;
+    }
+    public class RegisterAdminDto
+    {
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+    }
+
+    public class RegisterStudentDto
+    {
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string EnrollmentNumber { get; set; } = string.Empty;
+        public string Department { get; set; } = string.Empty;
+    }
+}
