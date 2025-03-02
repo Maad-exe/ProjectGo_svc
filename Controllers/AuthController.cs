@@ -86,6 +86,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("teachers")]
+        [Authorize] // Add proper authorization
         public async Task<IActionResult> GetAllTeachers()
         {
             var teachers = await _authService.GetAllTeachersAsync();
