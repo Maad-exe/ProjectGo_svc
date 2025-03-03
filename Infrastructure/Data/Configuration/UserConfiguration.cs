@@ -17,7 +17,7 @@ namespace backend.Infrastructure.Data.Configuration
     {
         public void Configure(EntityTypeBuilder<Admin> builder)
         {
-
+            //Filhal Empty
         }
     }
 }

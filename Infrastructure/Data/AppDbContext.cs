@@ -13,6 +13,8 @@ namespace backend.Infrastructure.Data
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<Student> Students { get; set; }
+        public DbSet<Group> Groups { get; set; }
+        public DbSet<GroupMember> GroupMembers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -22,6 +24,19 @@ namespace backend.Infrastructure.Data
             modelBuilder.Entity<Admin>().ToTable("Admins");
             modelBuilder.Entity<Teacher>().ToTable("Teachers");
             modelBuilder.Entity<Student>().ToTable("Students");
+            modelBuilder.Entity<Group>().ToTable("Groups");
+            modelBuilder.Entity<GroupMember>().ToTable("GroupMembers");
+
+            //configure relationships
+            modelBuilder.Entity<GroupMember>()
+            .HasOne(gm => gm.Group)
+            .WithMany(g => g.Members)
+            .HasForeignKey(gm => gm.GroupId);
+
+            modelBuilder.Entity<GroupMember>()
+                .HasOne(gm => gm.Student)
+                .WithMany()
+                .HasForeignKey(gm => gm.StudentId);
 
             modelBuilder.Entity<Admin>().HasData(new Admin
             {

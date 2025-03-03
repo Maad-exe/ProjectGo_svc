@@ -67,19 +67,19 @@ namespace backend.Infrastructure.Services
         private string GenerateJwtToken(User user)
         {
             var jwtSecret = _configuration["JwtSettings:Secret"]
-                ?? throw new InvalidOperationException("JWT secret not configured");
+            ?? throw new InvalidOperationException("JWT secret not configured");
             var key = Encoding.ASCII.GetBytes(jwtSecret);
             var studentInfo = user.Role == UserType.Student ? (user as Student) : null;
             var claims = new List<Claim>
-    {new Claim("role", user.Role.ToString()),
-        new Claim(JwtRegisteredClaimNames.Sub, user.Email),  // "sub" claim for subject
-        new Claim(JwtRegisteredClaimNames.Name, user.FullName),
-        new Claim("UserId", user.Id.ToString()),
-        new Claim(JwtRegisteredClaimNames.Email, user.Email),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
-        new Claim(JwtRegisteredClaimNames.Nbf, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
-    };
+             {new Claim("role", user.Role.ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email),  // "sub" claim for subject
+                new Claim(JwtRegisteredClaimNames.Name, user.FullName),
+                new Claim("UserId", user.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
+                new Claim(JwtRegisteredClaimNames.Nbf, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
+             };
             // Add student-specific claims only if user is a student
             if (studentInfo != null)
             {

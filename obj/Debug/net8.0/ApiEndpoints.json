@@ -9,7 +9,7 @@
     "Parameters": [
       {
         "Name": "request",
-        "Type": "backend.Controllers.LoginDto",
+        "Type": "backend.DTOs.LoginDto",
         "IsRequired": true
       }
     ],
@@ -25,7 +25,7 @@
     "Parameters": [
       {
         "Name": "request",
-        "Type": "backend.Controllers.RegisterAdminDto",
+        "Type": "backend.DTOs.RegisterAdminDto",
         "IsRequired": true
       }
     ],
@@ -41,7 +41,7 @@
     "Parameters": [
       {
         "Name": "request",
-        "Type": "backend.Controllers.RegisterStudentDto",
+        "Type": "backend.DTOs.RegisterStudentDto",
         "IsRequired": true
       }
     ],
@@ -57,7 +57,7 @@
     "Parameters": [
       {
         "Name": "request",
-        "Type": "backend.Controllers.RegisterTeacherDto",
+        "Type": "backend.DTOs.RegisterTeacherDto",
         "IsRequired": true
       }
     ],
@@ -71,6 +71,70 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.GroupController",
+    "Method": "CreateGroup",
+    "RelativePath": "api/groups",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "groupDto",
+        "Type": "backend.DTOs.CreateGroupDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.GroupController",
+    "Method": "GetGroupById",
+    "RelativePath": "api/groups/{groupId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "groupId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.GroupController",
+    "Method": "GetStudentGroups",
+    "RelativePath": "api/groups/student/{studentId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "studentId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.GroupController",
+    "Method": "GetStudentByEmail",
+    "RelativePath": "api/groups/student/search",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "email",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
     "ReturnTypes": []
   }
 ]

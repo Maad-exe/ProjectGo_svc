@@ -8,8 +8,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using backend.Core.Settings;
-//using System.Security.Claims;
-//using System.IdentityModel.Tokens.Jwt;
+
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -21,11 +20,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Configure JWT Settings
 builder.Services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
-var jwtSecret = configuration["JwtSettings:Secret"];
+        var jwtSecret = configuration["JwtSettings:Secret"];
 if (string.IsNullOrEmpty(jwtSecret))
 {
     throw new InvalidOperationException("JWT Secret key is not configured");
 }
+
 var key = Encoding.ASCII.GetBytes(jwtSecret);
 
 // Add CORS
@@ -59,19 +59,10 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = false,
         ValidateLifetime = true,
         ClockSkew = TimeSpan.FromMinutes(5),
-        // Make sure these match the claims you create in GenerateJwtToken
         RoleClaimType = "role",
         NameClaimType = "sub"
     };
-    // Critical: Match these to how you're creating your tokens
-    // RoleClaimType = ClaimTypes.Role, // Match this to your token's claim type for roles
-    //   NameClaimType = JwtRegisteredClaimNames.Sub,
-
-    // Be lenient during troubleshooting
-    // RequireSignedTokens = true,
-    //   ValidateActor = false
-    // };
-
+    
     // Add debug handlers
     options.Events = new JwtBearerEvents
     {
@@ -108,8 +99,16 @@ builder.Services.AddAuthentication(options =>
 // Configure Authorization
 builder.Services.AddAuthorization(options =>
 {
+   
     options.AddPolicy("StudentPolicy", policy =>
         policy.RequireClaim("role", "Student"));
+
+    
+    options.AddPolicy("TeacherPolicy", policy =>
+        policy.RequireClaim("role", "Teacher"));
+
+    options.AddPolicy("AdminPolicy", policy =>
+        policy.RequireClaim("role", "Admin"));
 });
 
 
@@ -117,8 +116,10 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<ITeacherRepository, TeacherRepository>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>(); // Add if needed
+builder.Services.AddScoped<IUserRepository, UserRepository>(); 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+builder.Services.AddScoped<IGroupService, GroupService>();
 
 // Add Controllers
 builder.Services.AddControllers();

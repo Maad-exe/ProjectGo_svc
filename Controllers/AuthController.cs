@@ -86,7 +86,8 @@ namespace backend.Controllers
         }
 
         [HttpGet("teachers")]
-        [Authorize] // Add proper authorization
+        [Authorize]
+        // [Authorize(Policy = "StudentPolicy")] 
         public async Task<IActionResult> GetAllTeachers()
         {
             var teachers = await _authService.GetAllTeachersAsync();
@@ -94,38 +95,6 @@ namespace backend.Controllers
         }
 
     }
-
-
-
-    public class LoginDto
-    {
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-    }
-
-
-    public class RegisterTeacherDto
-    {
-        public string FullName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        public string Qualification { get; set; } = string.Empty;
-        public string AreaOfSpecialization { get; set; } = string.Empty;
-        public string OfficeLocation { get; set; } = string.Empty;
-    }
-    public class RegisterAdminDto
-    {
-        public string FullName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-    }
-
-    public class RegisterStudentDto
-    {
-        public string FullName { get; set; } = string.Empty;
-        public string Email { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-        public string EnrollmentNumber { get; set; } = string.Empty;
-        public string Department { get; set; } = string.Empty;
-    }
 }
+
+
