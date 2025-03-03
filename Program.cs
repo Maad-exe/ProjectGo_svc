@@ -59,8 +59,8 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = false,
         ValidateLifetime = true,
         ClockSkew = TimeSpan.FromMinutes(5),
-        RoleClaimType = "role",
-        NameClaimType = "sub"
+        RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
+        NameClaimType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"
     };
     
     // Add debug handlers
@@ -99,16 +99,15 @@ builder.Services.AddAuthentication(options =>
 // Configure Authorization
 builder.Services.AddAuthorization(options =>
 {
-   
-    options.AddPolicy("StudentPolicy", policy =>
-        policy.RequireClaim("role", "Student"));
 
-    
+    options.AddPolicy("StudentPolicy", policy =>
+        policy.RequireRole("Student"));
+
     options.AddPolicy("TeacherPolicy", policy =>
-        policy.RequireClaim("role", "Teacher"));
+        policy.RequireRole("Teacher"));
 
     options.AddPolicy("AdminPolicy", policy =>
-        policy.RequireClaim("role", "Admin"));
+        policy.RequireRole("Admin"));
 });
 
 

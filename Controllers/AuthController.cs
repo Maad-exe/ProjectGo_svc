@@ -86,10 +86,18 @@ namespace backend.Controllers
         }
 
         [HttpGet("teachers")]
-        [Authorize]
-        // [Authorize(Policy = "StudentPolicy")] 
+        [Authorize(Policy = "StudentPolicy")]
         public async Task<IActionResult> GetAllTeachers()
         {
+            // Log the current identity and claims before processing
+            Console.WriteLine($"User Identity Name: {User.Identity?.Name}");
+            Console.WriteLine("User Claims:");
+            foreach (var claim in User.Claims)
+            {
+                Console.WriteLine($"  {claim.Type}: {claim.Value}");
+            }
+            Console.WriteLine($"Has Student Role: {User.HasClaim(c => c.Type == "role" && c.Value == "Student")}");
+
             var teachers = await _authService.GetAllTeachersAsync();
             return Ok(teachers);
         }

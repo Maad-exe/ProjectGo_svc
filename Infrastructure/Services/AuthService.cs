@@ -71,7 +71,7 @@ namespace backend.Infrastructure.Services
             var key = Encoding.ASCII.GetBytes(jwtSecret);
             var studentInfo = user.Role == UserType.Student ? (user as Student) : null;
             var claims = new List<Claim>
-             {new Claim("role", user.Role.ToString()),
+             { new Claim("role", user.Role.ToString()),
                 new Claim(JwtRegisteredClaimNames.Sub, user.Email),  // "sub" claim for subject
                 new Claim(JwtRegisteredClaimNames.Name, user.FullName),
                 new Claim("UserId", user.Id.ToString()),

@@ -9,7 +9,7 @@ namespace backend.Controllers
 {
     [Route("api/groups")]
     [ApiController]
-    [Authorize]
+    [Authorize(Policy = "StudentPolicy")]
     public class GroupController : ControllerBase
     {
         private readonly IGroupService _groupService;
