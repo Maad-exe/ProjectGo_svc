@@ -4,5 +4,7 @@
     {
         public string EnrollmentNumber { get; set; } = string.Empty;
         public string Department { get; set; } = string.Empty;
+
+        //public double CGPA { get; set; } = 
     }
 }

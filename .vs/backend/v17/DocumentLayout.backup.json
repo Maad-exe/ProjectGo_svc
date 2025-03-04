@@ -3,8 +3,28 @@
   "WorkspaceRootPath": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|c:\\users\\hamma\\source\\repos\\ramdan\\core\\entities\\student.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:core\\entities\\student.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|c:\\users\\hamma\\source\\repos\\ramdan\\core\\entities\\group.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:core\\entities\\group.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|c:\\users\\hamma\\source\\repos\\ramdan\\infrastructure\\services\\groupservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:infrastructure\\services\\groupservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|c:\\users\\hamma\\source\\repos\\ramdan\\controllers\\groupcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:controllers\\groupcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|c:\\users\\hamma\\source\\repos\\ramdan\\dtos\\groupdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:dtos\\groupdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|c:\\users\\hamma\\source\\repos\\ramdan\\infrastructure\\repositories\\studentrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:infrastructure\\repositories\\studentrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|c:\\users\\hamma\\source\\repos\\ramdan\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -47,24 +67,12 @@
       "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:core\\enums\\usertype.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|c:\\users\\hamma\\source\\repos\\ramdan\\infrastructure\\services\\groupservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:infrastructure\\services\\groupservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|c:\\users\\hamma\\source\\repos\\ramdan\\infrastructure\\repositories\\grouprepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:infrastructure\\repositories\\grouprepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|c:\\users\\hamma\\source\\repos\\ramdan\\infrastructure\\repositories\\contracts\\igrouprepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:infrastructure\\repositories\\contracts\\igrouprepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|c:\\users\\hamma\\source\\repos\\ramdan\\dtos\\groupdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:dtos\\groupdtos.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|c:\\users\\hamma\\source\\repos\\ramdan\\core\\entities\\group.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:core\\entities\\group.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|c:\\users\\hamma\\source\\repos\\ramdan\\migrations\\20250220082823_initialcreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -93,10 +101,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|c:\\users\\hamma\\source\\repos\\ramdan\\infrastructure\\repositories\\adminrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:infrastructure\\repositories\\adminrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|c:\\users\\hamma\\source\\repos\\ramdan\\infrastructure\\repositories\\studentrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:infrastructure\\repositories\\studentrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|c:\\users\\hamma\\source\\repos\\ramdan\\infrastructure\\repositories\\contracts\\iadminrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -135,10 +139,6 @@
       "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:core\\entities\\teacher.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|c:\\users\\hamma\\source\\repos\\ramdan\\core\\entities\\student.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:core\\entities\\student.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|c:\\users\\hamma\\source\\repos\\ramdan\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
@@ -154,7 +154,57 @@
           "Children": [
             {
               "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "GroupController.cs",
+              "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Controllers\\GroupController.cs",
+              "RelativeDocumentMoniker": "Controllers\\GroupController.cs",
+              "ToolTip": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Controllers\\GroupController.cs",
+              "RelativeToolTip": "Controllers\\GroupController.cs",
+              "ViewState": "AgIAADMAAAAAAAAAAAAIwD4AAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-02T19:10:23.756Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "GroupService.cs",
+              "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Services\\GroupService.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Services\\GroupService.cs",
+              "ToolTip": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Services\\GroupService.cs",
+              "RelativeToolTip": "Infrastructure\\Services\\GroupService.cs",
+              "ViewState": "AgIAAEsAAAAAAAAAAAAiwF0AAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-02T19:09:51.38Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 5,
+              "Title": "StudentRepository.cs",
+              "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Repositories\\StudentRepository.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Repositories\\StudentRepository.cs",
+              "ToolTip": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Repositories\\StudentRepository.cs",
+              "RelativeToolTip": "Infrastructure\\Repositories\\StudentRepository.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAAwBMAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-02T12:19:39.167Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Student.cs",
+              "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Core\\Entities\\Student.cs",
+              "RelativeDocumentMoniker": "Core\\Entities\\Student.cs",
+              "ToolTip": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Core\\Entities\\Student.cs",
+              "RelativeToolTip": "Core\\Entities\\Student.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-02T12:18:50.399Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
               "Title": "AppDbContext.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Data\\AppDbContext.cs",
               "RelativeDocumentMoniker": "Infrastructure\\Data\\AppDbContext.cs",
@@ -167,6 +217,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "Group.cs",
+              "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Core\\Entities\\Group.cs",
+              "RelativeDocumentMoniker": "Core\\Entities\\Group.cs",
+              "ToolTip": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Core\\Entities\\Group.cs",
+              "RelativeToolTip": "Core\\Entities\\Group.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAIwCAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-02T19:05:50.639Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "AuthController.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
@@ -178,32 +241,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAGAAAAAAAAAAAAAAwGgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-02-28T19:24:04.14Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "GroupController.cs",
-              "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Controllers\\GroupController.cs",
-              "RelativeDocumentMoniker": "Controllers\\GroupController.cs",
-              "ToolTip": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Controllers\\GroupController.cs",
-              "RelativeToolTip": "Controllers\\GroupController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAZAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-02T19:10:23.756Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 8,
               "Title": "AuthService.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Services\\AuthService.cs",
               "RelativeDocumentMoniker": "Infrastructure\\Services\\AuthService.cs",
@@ -215,7 +253,31 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 4,
+              "Title": "GroupDtos.cs",
+              "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\DTOs\\GroupDtos.cs",
+              "RelativeDocumentMoniker": "DTOs\\GroupDtos.cs",
+              "ToolTip": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\DTOs\\GroupDtos.cs",
+              "RelativeToolTip": "DTOs\\GroupDtos.cs",
+              "ViewState": "AgIAAAwAAAAAAAAAAAAYwBQAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-02T19:07:43.087Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAGAAAAAAAAAAAAAAwGgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-02-28T19:24:04.14Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
               "Title": "UserConfiguration.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Data\\Configuration\\UserConfiguration.cs",
               "RelativeDocumentMoniker": "Infrastructure\\Data\\Configuration\\UserConfiguration.cs",
@@ -227,7 +289,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 12,
               "Title": "IGroupService.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Services\\Contracts\\IGroupService.cs",
               "RelativeDocumentMoniker": "Infrastructure\\Services\\Contracts\\IGroupService.cs",
@@ -239,7 +301,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 9,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\appsettings.json",
               "RelativeDocumentMoniker": "appsettings.json",
@@ -251,7 +313,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 14,
               "Title": "IUserRepository.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Repositories\\Contracts\\IUserRepository.cs",
               "RelativeDocumentMoniker": "Infrastructure\\Repositories\\Contracts\\IUserRepository.cs",
@@ -263,7 +325,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 13,
               "Title": "IUserManagementRepository.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Repositories\\Contracts\\IUserManagementRepository.cs",
               "RelativeDocumentMoniker": "Infrastructure\\Repositories\\Contracts\\IUserManagementRepository.cs",
@@ -275,7 +337,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 15,
               "Title": "UserType.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Core\\Enums\\UserType.cs",
               "RelativeDocumentMoniker": "Core\\Enums\\UserType.cs",
@@ -287,19 +349,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "GroupService.cs",
-              "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Services\\GroupService.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Services\\GroupService.cs",
-              "ToolTip": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Services\\GroupService.cs",
-              "RelativeToolTip": "Infrastructure\\Services\\GroupService.cs",
-              "ViewState": "AgIAAGwAAAAAAAAAAAAowCQAAAA1AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-02T19:09:51.38Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 17,
               "Title": "IGroupRepository.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Repositories\\Contracts\\IGroupRepository.cs",
               "RelativeDocumentMoniker": "Infrastructure\\Repositories\\Contracts\\IGroupRepository.cs",
@@ -311,7 +361,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 16,
               "Title": "GroupRepository.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Repositories\\GroupRepository.cs",
               "RelativeDocumentMoniker": "Infrastructure\\Repositories\\GroupRepository.cs",
@@ -323,31 +373,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "GroupDtos.cs",
-              "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\DTOs\\GroupDtos.cs",
-              "RelativeDocumentMoniker": "DTOs\\GroupDtos.cs",
-              "ToolTip": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\DTOs\\GroupDtos.cs",
-              "RelativeToolTip": "DTOs\\GroupDtos.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAwB0AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-02T19:07:43.087Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "Group.cs",
-              "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Core\\Entities\\Group.cs",
-              "RelativeDocumentMoniker": "Core\\Entities\\Group.cs",
-              "ToolTip": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Core\\Entities\\Group.cs",
-              "RelativeToolTip": "Core\\Entities\\Group.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAIwCAAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-02T19:05:50.639Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 18,
               "Title": "20250220082823_InitialCreate.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Migrations\\20250220082823_InitialCreate.cs",
               "RelativeDocumentMoniker": "Migrations\\20250220082823_InitialCreate.cs",
@@ -359,7 +385,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 19,
               "Title": "RegisterStudentDto.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\DTOs\\RegisterStudentDto.cs",
               "RelativeDocumentMoniker": "DTOs\\RegisterStudentDto.cs",
@@ -371,7 +397,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 20,
               "Title": "RegisterTeacherDto.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\DTOs\\RegisterTeacherDto.cs",
               "RelativeDocumentMoniker": "DTOs\\RegisterTeacherDto.cs",
@@ -383,7 +409,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 21,
               "Title": "RegisterAdminDto.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\DTOs\\RegisterAdminDto.cs",
               "RelativeDocumentMoniker": "DTOs\\RegisterAdminDto.cs",
@@ -395,7 +421,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 22,
               "Title": "LoginDto.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\DTOs\\LoginDto.cs",
               "RelativeDocumentMoniker": "DTOs\\LoginDto.cs",
@@ -407,7 +433,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 23,
               "Title": "IAuthService.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Services\\Contracts\\IAuthService.cs",
               "RelativeDocumentMoniker": "Infrastructure\\Services\\Contracts\\IAuthService.cs",
@@ -419,7 +445,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 25,
               "Title": "IAdminRepository.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Repositories\\Contracts\\IAdminRepository.cs",
               "RelativeDocumentMoniker": "Infrastructure\\Repositories\\Contracts\\IAdminRepository.cs",
@@ -431,19 +457,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
-              "Title": "StudentRepository.cs",
-              "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Repositories\\StudentRepository.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Repositories\\StudentRepository.cs",
-              "ToolTip": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Repositories\\StudentRepository.cs",
-              "RelativeToolTip": "Infrastructure\\Repositories\\StudentRepository.cs",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAiwBwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-02T12:19:39.167Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 26,
               "Title": "TeacherDetailsDto.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\DTOs\\TeacherDetailsDto.cs",
               "RelativeDocumentMoniker": "DTOs\\TeacherDetailsDto.cs",
@@ -455,7 +469,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 24,
               "Title": "AdminRepository.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Repositories\\AdminRepository.cs",
               "RelativeDocumentMoniker": "Infrastructure\\Repositories\\AdminRepository.cs",
@@ -467,7 +481,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 27,
               "Title": "Admin.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Core\\Entities\\Admin.cs",
               "RelativeDocumentMoniker": "Core\\Entities\\Admin.cs",
@@ -479,7 +493,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 28,
               "Title": "backend.http",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\backend.http",
               "RelativeDocumentMoniker": "backend.http",
@@ -491,7 +505,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 29,
               "Title": "UserRepository.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Repositories\\UserRepository.cs",
               "RelativeDocumentMoniker": "Infrastructure\\Repositories\\UserRepository.cs",
@@ -503,7 +517,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 31,
               "Title": "JwtSettings.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Core\\Settings\\JwtSettings.cs",
               "RelativeDocumentMoniker": "Core\\Settings\\JwtSettings.cs",
@@ -515,7 +529,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 30,
               "Title": "TeacherRepository.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Infrastructure\\Repositories\\TeacherRepository.cs",
               "RelativeDocumentMoniker": "Infrastructure\\Repositories\\TeacherRepository.cs",
@@ -527,7 +541,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 32,
               "Title": "User.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Core\\Entities\\User.cs",
               "RelativeDocumentMoniker": "Core\\Entities\\User.cs",
@@ -539,7 +553,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 33,
               "Title": "Teacher.cs",
               "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Core\\Entities\\Teacher.cs",
               "RelativeDocumentMoniker": "Core\\Entities\\Teacher.cs",
@@ -548,18 +562,6 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-03-02T12:18:54.738Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 33,
-              "Title": "Student.cs",
-              "DocumentMoniker": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Core\\Entities\\Student.cs",
-              "RelativeDocumentMoniker": "Core\\Entities\\Student.cs",
-              "ToolTip": "C:\\Users\\hamma\\source\\repos\\RAMDAN\\Core\\Entities\\Student.cs",
-              "RelativeToolTip": "Core\\Entities\\Student.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-02T12:18:50.399Z"
             },
             {
               "$type": "Document",
