@@ -120,7 +120,8 @@ namespace backend.Infrastructure.Services
                     FullName = m.Student.FullName,
                     Email = m.Student.Email,
                     EnrollmentNumber = m.Student.EnrollmentNumber,
-                    Department = m.Student.Department
+                    Department = m.Student.Department,
+                    IsCreator = m.IsCreator
                 }).ToList()
             };
         }

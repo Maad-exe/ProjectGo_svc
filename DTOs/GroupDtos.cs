@@ -18,6 +18,7 @@ namespace backend.DTOs
         public string Email { get; set; } = string.Empty;
         public string EnrollmentNumber { get; set; } = string.Empty;
         public string Department { get; set; } = string.Empty;
+        public bool IsCreator { get; set; }
     }
 
     public class GroupDetailsDto
