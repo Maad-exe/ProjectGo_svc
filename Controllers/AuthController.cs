@@ -61,6 +61,7 @@ namespace backend.Controllers
                 Qualification = request.Qualification,
                 AreaOfSpecialization = request.AreaOfSpecialization,
                 OfficeLocation = request.OfficeLocation
+               
             };
 
             await _authService.RegisterTeacherAsync(teacher);

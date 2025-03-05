@@ -27,11 +27,11 @@ namespace backend.Infrastructure.Data
             modelBuilder.Entity<Group>().ToTable("Groups");
             modelBuilder.Entity<GroupMember>().ToTable("GroupMembers");
 
-            //configure relationships
+            // Configure relationships
             modelBuilder.Entity<GroupMember>()
-            .HasOne(gm => gm.Group)
-            .WithMany(g => g.Members)
-            .HasForeignKey(gm => gm.GroupId);
+                .HasOne(gm => gm.Group)
+                .WithMany(g => g.Members)
+                .HasForeignKey(gm => gm.GroupId);
 
             modelBuilder.Entity<GroupMember>()
                 .HasOne(gm => gm.Student)
@@ -50,7 +50,6 @@ namespace backend.Infrastructure.Data
 
             // Apply configurations
             modelBuilder.ApplyConfiguration(new UserConfiguration());
-        
-    }
+        }
     }
 }

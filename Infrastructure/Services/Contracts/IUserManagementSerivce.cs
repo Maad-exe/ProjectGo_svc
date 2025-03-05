@@ -1,8 +1,8 @@
-﻿
-using backend.DTOs;
-namespace backend.Infrastructure.Repositories.Contracts
+﻿using backend.DTOs;
+
+namespace backend.Infrastructure.Services.Contracts
 {
-    public interface IUserManagementRepository
+    public interface IUserManagementService
     {
         Task<List<UserDetailsDto>> GetAllUsersAsync();
         Task<UserDetailsDto?> GetUserByIdAsync(int userId);

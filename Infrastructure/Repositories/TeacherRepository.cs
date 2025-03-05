@@ -29,9 +29,7 @@ namespace backend.Infrastructure.Repositories
         {
             Console.WriteLine("Attempting to fetch teachers from database...");
             return await _context.Teachers.ToListAsync();
-            var teachers = await _context.Teachers.ToListAsync();
-            Console.WriteLine($"Found {teachers.Count} teachers");
-            return teachers;
+           
         }
     }
 }

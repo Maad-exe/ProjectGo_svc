@@ -111,7 +111,8 @@ namespace backend.Infrastructure.Services
                 email = t.Email,
                 qualification = t.Qualification,
                 areaOfSpecialization = t.AreaOfSpecialization,
-                officeLocation = t.OfficeLocation
+                officeLocation = t.OfficeLocation,
+                AssignedGroups = t.AssignedGroups
             }).ToList();
         }
     }

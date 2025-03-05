@@ -7,5 +7,9 @@
         public string qualification { get; set; } = string.Empty;
         public string areaOfSpecialization { get; set; } = string.Empty;
         public string officeLocation { get; set; } = string.Empty;
+
+        public int AssignedGroups { get; set; }
+
     }
+
 }
