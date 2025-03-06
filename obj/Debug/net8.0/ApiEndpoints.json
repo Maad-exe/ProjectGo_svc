@@ -138,6 +138,58 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "TeacherDashboardController",
+    "Method": "RespondToRequest",
+    "RelativePath": "api/teacher-dashboard/respond-to-request",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "response",
+        "Type": "backend.DTOs.SupervisionResponseDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TeacherDashboardController",
+    "Method": "GetSupervisionRequests",
+    "RelativePath": "api/teacher-dashboard/supervision-requests",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TeacherController",
+    "Method": "GetAllTeachers",
+    "RelativePath": "api/teachers",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TeacherController",
+    "Method": "RequestSupervision",
+    "RelativePath": "api/teachers/request-supervision",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "backend.DTOs.SupervisionRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "backend.Controllers.UserManagementController",
     "Method": "GetAllUsers",
     "RelativePath": "api/users",

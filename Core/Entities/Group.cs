@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-
+using backend.Core.Enums;
 namespace backend.Core.Entities
 {
     public class Group
@@ -14,7 +14,11 @@ namespace backend.Core.Entities
 
         // Navigation properties
         public List<GroupMember> Members { get; set; } = new List<GroupMember>();
-    }
+        public int? TeacherId { get; set; }
+        public Teacher? Teacher { get; set; }
+        public GroupSupervisionStatus SupervisionStatus { get; set; } = GroupSupervisionStatus.None;
+    
+}
 
     public class GroupMember
     {

@@ -1,4 +1,5 @@
 ﻿using backend.Core.Entities;
+using backend.Core.Enums;
 using backend.DTOs;
 using backend.Infrastructure.Repositories.Contracts;
 using backend.Infrastructure.Services.Contracts;
@@ -9,11 +10,14 @@ namespace backend.Infrastructure.Services
     {
         private readonly IGroupRepository _groupRepository;
         private readonly IStudentRepository _studentRepository;
+        private readonly ITeacherRepository _teacherRepository;
 
-        public GroupService(IGroupRepository groupRepository, IStudentRepository studentRepository)
+
+        public GroupService(IGroupRepository groupRepository, IStudentRepository studentRepository, ITeacherRepository teacherRepository)
         {
             _groupRepository = groupRepository;
             _studentRepository = studentRepository;
+            _teacherRepository = teacherRepository;
         }
 
         public async Task<StudentDetailsDto?> GetStudentByEmailAsync(string email)
@@ -124,6 +128,80 @@ namespace backend.Infrastructure.Services
                     IsCreator = m.IsCreator
                 }).ToList()
             };
+        }
+
+        public async Task<List<TeacherDetailsDto>> GetAllTeachersAsync()
+        {
+            var teachers = await _teacherRepository.GetAllTeachersAsync();
+            return teachers.Select(t => new TeacherDetailsDto
+            {
+                Id = t.Id,
+                fullName = t.FullName,
+                email = t.Email,
+                qualification = t.Qualification,
+                areaOfSpecialization = t.AreaOfSpecialization,
+                officeLocation = t.OfficeLocation,
+                AssignedGroups = t.AssignedGroups
+            }).ToList();
+        }
+
+        public async Task<bool> RequestTeacherSupervisionAsync(SupervisionRequestDto request)
+        {
+            var group = await _groupRepository.GetGroupByIdAsync(request.GroupId);
+            if (group == null)
+                throw new ApplicationException("Group not found");
+
+            var teacher = await _teacherRepository.GetTeacherByIdAsync(request.TeacherId);
+            if (teacher == null)
+                throw new ApplicationException("Teacher not found");
+
+            group.SupervisionStatus = GroupSupervisionStatus.Requested;
+            return await _groupRepository.UpdateGroupSupervisionRequestAsync(group, request.TeacherId, request.Message);
+        }
+
+        public async Task<List<TeacherSupervisionRequestDto>> GetTeacherSupervisionRequestsAsync(int teacherId)
+        {
+            var requests = await _groupRepository.GetSupervisionRequestsForTeacherAsync(teacherId);
+
+            return requests.Select(r => new TeacherSupervisionRequestDto
+            {
+                Id = r.Id,
+                GroupId = r.Group.Id,
+                GroupName = r.Group.Name,
+                RequestedAt = r.RequestedAt,
+                GroupMembers = r.Group.Members.Select(m => new StudentDetailsDto
+                {
+                    Id = m.Student.Id,
+                    FullName = m.Student.FullName,
+                    Email = m.Student.Email,
+                    EnrollmentNumber = m.Student.EnrollmentNumber,
+                    Department = m.Student.Department,
+                    IsCreator = m.IsCreator
+                }).ToList(),
+                Message = r.Message
+            }).ToList();
+        }
+
+        public async Task<GroupDetailsDto> RespondToSupervisionRequestAsync(int teacherId, SupervisionResponseDto response)
+        {
+            var group = await _groupRepository.GetGroupByIdAsync(response.GroupId);
+            if (group == null)
+                throw new ApplicationException("Group not found");
+
+            group.SupervisionStatus = response.IsApproved
+                ? GroupSupervisionStatus.Approved
+                : GroupSupervisionStatus.Rejected;
+
+            if (response.IsApproved)
+            {
+                group.TeacherId = teacherId;
+                await _teacherRepository.IncrementAssignedGroupsAsync(teacherId);
+            }
+
+            await _groupRepository.UpdateGroupAsync(group);
+
+            // Return updated group details
+            return MapGroupToDto(group);
         }
     }
 }

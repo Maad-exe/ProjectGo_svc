@@ -31,5 +31,20 @@ namespace backend.Infrastructure.Repositories
             return await _context.Teachers.ToListAsync();
            
         }
+
+        public async Task<Teacher?> GetTeacherByIdAsync(int teacherId)
+        {
+            return await _context.Teachers.FindAsync(teacherId);
+        }
+
+        public async Task IncrementAssignedGroupsAsync(int teacherId)
+        {
+            var teacher = await _context.Teachers.FindAsync(teacherId);
+            if (teacher != null)
+            {
+                teacher.AssignedGroups++;
+                await _context.SaveChangesAsync();
+            }
+        }
     }
 }

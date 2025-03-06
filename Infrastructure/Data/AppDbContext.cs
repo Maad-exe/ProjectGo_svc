@@ -16,6 +16,8 @@ namespace backend.Infrastructure.Data
         public DbSet<Group> Groups { get; set; }
         public DbSet<GroupMember> GroupMembers { get; set; }
 
+        public DbSet<SupervisionRequest> SupervisionRequests { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -47,6 +49,18 @@ namespace backend.Infrastructure.Data
                 PasswordHash = "$2a$11$dGbHOWMrjr/9KPl9LxongumrriovDITJb6H42vb3s4RpHAYURKE4C", // Static hash for "adminpassword"
                 Role = UserType.Admin
             });
+
+            {
+                // Existing configuration...
+
+                modelBuilder.Entity<SupervisionRequest>().ToTable("SupervisionRequests");
+
+                modelBuilder.Entity<Group>()
+                    .HasOne(g => g.Teacher)
+                    .WithMany()
+                    .HasForeignKey(g => g.TeacherId)
+                    .OnDelete(DeleteBehavior.SetNull);
+            }
 
             // Apply configurations
             modelBuilder.ApplyConfiguration(new UserConfiguration());
