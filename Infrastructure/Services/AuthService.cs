@@ -106,7 +106,8 @@ namespace backend.Infrastructure.Services
         {
             var teachers = await _teacherRepository.GetAllTeachersAsync();
             return teachers.Select(t => new TeacherDetailsDto
-            {
+            {  
+                Id = t.Id,
                 fullName = t.FullName,
                 email = t.Email,
                 qualification = t.Qualification,

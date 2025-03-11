@@ -138,7 +138,33 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "TeacherDashboardController",
+    "ContainingType": "backend.Controllers.GroupController",
+    "Method": "GetGroupsSupervisionStatus",
+    "RelativePath": "api/groups/supervision-status",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "ids",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.TeacherDashboardController",
+    "Method": "GetTeacherGroups",
+    "RelativePath": "api/teacher-dashboard/my-groups",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.TeacherDashboardController",
     "Method": "RespondToRequest",
     "RelativePath": "api/teacher-dashboard/respond-to-request",
     "HttpMethod": "POST",
@@ -154,7 +180,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "TeacherDashboardController",
+    "ContainingType": "backend.Controllers.TeacherDashboardController",
     "Method": "GetSupervisionRequests",
     "RelativePath": "api/teacher-dashboard/supervision-requests",
     "HttpMethod": "GET",
@@ -171,6 +197,22 @@
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "TeacherController",
+    "Method": "GetTeacherById",
+    "RelativePath": "api/teachers/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {

@@ -239,6 +239,27 @@
         }
       }
     },
+    "/api/groups/supervision-status": {
+      "get": {
+        "tags": [
+          "Group"
+        ],
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/teachers": {
       "get": {
         "tags": [
@@ -282,6 +303,29 @@
         }
       }
     },
+    "/api/teachers/{id}": {
+      "get": {
+        "tags": [
+          "Teacher"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/teacher-dashboard/supervision-requests": {
       "get": {
         "tags": [
@@ -318,6 +362,18 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/teacher-dashboard/my-groups": {
+      "get": {
+        "tags": [
+          "TeacherDashboard"
+        ],
         "responses": {
           "200": {
             "description": "OK"

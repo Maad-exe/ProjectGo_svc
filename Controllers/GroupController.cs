@@ -72,5 +72,41 @@ namespace backend.Controllers
 
             return Ok(student);
         }
+
+
+        // Controllers/GroupController.cs
+        [HttpGet("supervision-status")]
+        public async Task<IActionResult> GetGroupsSupervisionStatus([FromQuery] string ids)
+        {
+            if (string.IsNullOrEmpty(ids))
+                return BadRequest("Group IDs are required");
+
+            var groupIds = ids.Split(',')
+                .Select(id => int.TryParse(id, out int result) ? result : 0)
+                .Where(id => id > 0)
+                .ToList();
+
+            if (!groupIds.Any())
+                return BadRequest("Invalid group IDs provided");
+
+            var resultDict = new Dictionary<string, object>();
+
+            foreach (var groupId in groupIds)
+            {
+                var group = await _groupService.GetGroupByIdAsync(groupId);
+                if (group != null)
+                {
+                    resultDict.Add(groupId.ToString(), new
+                    {
+                        status = group.SupervisionStatus,
+                        teacherId = group.TeacherId
+                    });
+                }
+            }
+
+            return Ok(resultDict);
+        }
+
+
     }
 }

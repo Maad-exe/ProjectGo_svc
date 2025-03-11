@@ -21,11 +21,16 @@ namespace backend.DTOs
         public bool IsCreator { get; set; }
     }
 
+    
     public class GroupDetailsDto
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public List<StudentDetailsDto> Members { get; set; } = new List<StudentDetailsDto>();
+        public int? TeacherId { get; set; }
+        public string? TeacherName { get; set; }
+        public string SupervisionStatus { get; set; } = "None";
     }
+
 }

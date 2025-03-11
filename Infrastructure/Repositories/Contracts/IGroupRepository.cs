@@ -11,5 +11,9 @@ namespace backend.Infrastructure.Repositories.Contracts
         Task<bool> UpdateGroupSupervisionRequestAsync(Group group, int teacherId, string message);
         Task<List<SupervisionRequest>> GetSupervisionRequestsForTeacherAsync(int teacherId);
         Task UpdateGroupAsync(Group group);
+
+        Task<SupervisionRequest?> GetSupervisionRequestByGroupIdAndTeacherIdAsync(int groupId, int teacherId);
+        Task<IEnumerable<Group>> GetGroupsByTeacherIdAsync(int teacherId);
+
     }
 }

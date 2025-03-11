@@ -102,18 +102,29 @@ namespace backend.Infrastructure.Services
         public async Task<List<GroupDetailsDto>> GetStudentGroupsAsync(int studentId)
         {
             var groups = await _groupRepository.GetStudentGroupsAsync(studentId);
-            return groups.Select(MapGroupToDto).ToList();
+            var result = new List<GroupDetailsDto>();
+
+            foreach (var group in groups)
+            {
+                result.Add(await MapGroupToDto(group));
+            }
+
+            return result;
         }
+
 
         public async Task<GroupDetailsDto?> GetGroupByIdAsync(int groupId)
         {
             var group = await _groupRepository.GetGroupByIdAsync(groupId);
-            return group == null ? null : MapGroupToDto(group);
+            return group == null ? null : await MapGroupToDto(group);
         }
 
-        private GroupDetailsDto MapGroupToDto(Group group)
+        
+
+        // Infrastructure/Services/GroupService.cs
+        private async Task<GroupDetailsDto> MapGroupToDto(Group group)
         {
-            return new GroupDetailsDto
+            var dto = new GroupDetailsDto
             {
                 Id = group.Id,
                 Name = group.Name,
@@ -126,9 +137,24 @@ namespace backend.Infrastructure.Services
                     EnrollmentNumber = m.Student.EnrollmentNumber,
                     Department = m.Student.Department,
                     IsCreator = m.IsCreator
-                }).ToList()
+                }).ToList(),
+                TeacherId = group.TeacherId,
+                SupervisionStatus = group.SupervisionStatus.ToString()
             };
+
+            // If a teacher is assigned, get their name
+            if (group.TeacherId.HasValue)
+            {
+                var teacher = await _teacherRepository.GetTeacherByIdAsync(group.TeacherId.Value);
+                if (teacher != null)
+                {
+                    dto.TeacherName = teacher.FullName;
+                }
+            }
+
+            return dto;
         }
+
 
         public async Task<List<TeacherDetailsDto>> GetAllTeachersAsync()
         {
@@ -188,6 +214,13 @@ namespace backend.Infrastructure.Services
             if (group == null)
                 throw new ApplicationException("Group not found");
 
+            // Find the corresponding supervision request
+            var supervisionRequest = await _groupRepository.GetSupervisionRequestByGroupIdAndTeacherIdAsync(
+                response.GroupId, teacherId);
+
+            if (supervisionRequest == null)
+                throw new ApplicationException("Supervision request not found");
+
             group.SupervisionStatus = response.IsApproved
                 ? GroupSupervisionStatus.Approved
                 : GroupSupervisionStatus.Rejected;
@@ -198,10 +231,49 @@ namespace backend.Infrastructure.Services
                 await _teacherRepository.IncrementAssignedGroupsAsync(teacherId);
             }
 
+            // Mark the request as processed
+            supervisionRequest.IsProcessed = true;
+
             await _groupRepository.UpdateGroupAsync(group);
 
-            // Return updated group details
-            return MapGroupToDto(group);
+            // Return updated group details - add await here
+            return await MapGroupToDto(group);
         }
+
+
+        public async Task<IEnumerable<GroupDetailsDto>> GetTeacherGroupsAsync(int teacherId)
+        {
+            var groups = await _groupRepository.GetGroupsByTeacherIdAsync(teacherId);
+            var result = new List<GroupDetailsDto>();
+
+            // Process each group one by one and await the results
+            foreach (var group in groups)
+            {
+                result.Add(await MapGroupToDto(group));
+            }
+
+            return result;
+        }
+
+
+        // Infrastructure/Services/GroupService.cs
+        public async Task<TeacherDetailsDto?> GetTeacherByIdAsync(int teacherId)
+        {
+            var teacher = await _teacherRepository.GetTeacherByIdAsync(teacherId);
+            if (teacher == null)
+                return null;
+
+            return new TeacherDetailsDto
+            {
+                Id = teacher.Id,
+                fullName = teacher.FullName,
+                email = teacher.Email,
+                qualification = teacher.Qualification,
+                areaOfSpecialization = teacher.AreaOfSpecialization,
+                officeLocation = teacher.OfficeLocation,
+                AssignedGroups = teacher.AssignedGroups
+            };
+        }
+
     }
 }

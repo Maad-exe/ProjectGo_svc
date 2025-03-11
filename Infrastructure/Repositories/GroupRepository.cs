@@ -83,5 +83,20 @@ namespace backend.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
+        public async Task<SupervisionRequest?> GetSupervisionRequestByGroupIdAndTeacherIdAsync(int groupId, int teacherId)
+        {
+            return await _context.SupervisionRequests
+                .FirstOrDefaultAsync(r => r.GroupId == groupId && r.TeacherId == teacherId && !r.IsProcessed);
+        }
+
+
+        public async Task<IEnumerable<Group>> GetGroupsByTeacherIdAsync(int teacherId)
+        {
+            return await _context.Groups
+                .Include(g => g.Members)
+                    .ThenInclude(m => m.Student)
+                .Where(g => g.TeacherId == teacherId)
+                .ToListAsync();
+        }
     }
 }

@@ -12,6 +12,8 @@ namespace backend.Infrastructure.Services.Contracts
         Task<bool> RequestTeacherSupervisionAsync(SupervisionRequestDto request);
         Task<List<TeacherSupervisionRequestDto>> GetTeacherSupervisionRequestsAsync(int teacherId);
         Task<GroupDetailsDto> RespondToSupervisionRequestAsync(int teacherId, SupervisionResponseDto response);
+        Task<IEnumerable<GroupDetailsDto>> GetTeacherGroupsAsync(int teacherId);
+        Task<TeacherDetailsDto?> GetTeacherByIdAsync(int teacherId);
     
 }
 }

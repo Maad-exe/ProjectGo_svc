@@ -40,6 +40,15 @@ namespace backend.Infrastructure.Data
                 .WithMany()
                 .HasForeignKey(gm => gm.StudentId);
 
+
+            modelBuilder.Entity<SupervisionRequest>().ToTable("SupervisionRequests");
+
+            modelBuilder.Entity<Group>()
+                .HasOne(g => g.Teacher)
+                .WithMany()
+                .HasForeignKey(g => g.TeacherId)
+                .OnDelete(DeleteBehavior.SetNull);
+
             modelBuilder.Entity<Admin>().HasData(new Admin
             {
                 Id = 1,
@@ -50,17 +59,9 @@ namespace backend.Infrastructure.Data
                 Role = UserType.Admin
             });
 
-            {
-                // Existing configuration...
 
-                modelBuilder.Entity<SupervisionRequest>().ToTable("SupervisionRequests");
 
-                modelBuilder.Entity<Group>()
-                    .HasOne(g => g.Teacher)
-                    .WithMany()
-                    .HasForeignKey(g => g.TeacherId)
-                    .OnDelete(DeleteBehavior.SetNull);
-            }
+            
 
             // Apply configurations
             modelBuilder.ApplyConfiguration(new UserConfiguration());
