@@ -10,6 +10,9 @@ namespace backend.Infrastructure.Services.Contracts
         Task RegisterTeacherAsync(Teacher teacher);
         Task RegisterStudentAsync(Student student);
         Task<List<TeacherDetailsDto>> GetAllTeachersAsync();
+        Task<bool> EmailExistsAsync(string email);
+        Task<bool> EnrollmentNumberExistsAsync(string enrollmentNumber);
+        
     }
 
 }

@@ -17,6 +17,7 @@ namespace backend.Infrastructure.Data
         public DbSet<GroupMember> GroupMembers { get; set; }
 
         public DbSet<SupervisionRequest> SupervisionRequests { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -42,12 +43,33 @@ namespace backend.Infrastructure.Data
 
 
             modelBuilder.Entity<SupervisionRequest>().ToTable("SupervisionRequests");
+            modelBuilder.Entity<SupervisionRequest>()
+                .HasOne(sr => sr.Group)
+                .WithMany()
+                .HasForeignKey(sr => sr.GroupId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Group>()
                 .HasOne(g => g.Teacher)
                 .WithMany()
                 .HasForeignKey(g => g.TeacherId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+
+            modelBuilder.Entity<ChatMessage>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.HasOne(e => e.Group)
+                    .WithMany(g => g.Messages)
+                    .HasForeignKey(e => e.GroupId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Sender)
+                    .WithMany()
+                    .HasForeignKey(e => e.SenderId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
 
             modelBuilder.Entity<Admin>().HasData(new Admin
             {
@@ -56,7 +78,8 @@ namespace backend.Infrastructure.Data
                 Email = "admin@projectgo.com",
                 FullName = "System Admin",
                 PasswordHash = "$2a$11$dGbHOWMrjr/9KPl9LxongumrriovDITJb6H42vb3s4RpHAYURKE4C", // Static hash for "adminpassword"
-                Role = UserType.Admin
+                Role = UserType.Admin,
+                IsSuperAdmin = true
             });
 
 

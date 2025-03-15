@@ -1,4 +1,5 @@
 ﻿using backend.Core.Entities;
+using backend.DTOs;
 
 namespace backend.Infrastructure.Repositories.Contracts
 {
@@ -15,5 +16,12 @@ namespace backend.Infrastructure.Repositories.Contracts
         Task<SupervisionRequest?> GetSupervisionRequestByGroupIdAndTeacherIdAsync(int groupId, int teacherId);
         Task<IEnumerable<Group>> GetGroupsByTeacherIdAsync(int teacherId);
 
-    }
+        Task<(bool InSupervisedGroup, string GroupName, string SupervisorName)> IsStudentInSupervisedGroupAsync(int studentId);
+      
+        Task<StudentSupervisionStatusDto> GetStudentSupervisionStatusAsync(int studentId);
+
+        Task DeleteSupervisionRequestsForGroupAsync(int groupId);
+        Task DeleteGroupAsync(int groupId);
+
+}
 }

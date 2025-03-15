@@ -1,28 +1,25 @@
 ﻿using backend.Core.Entities;
 using backend.Core.Enums;
 using backend.DTOs;
+using backend.Infrastructure.Data.UnitOfWork.Contract;
 using backend.Infrastructure.Repositories.Contracts;
 using backend.Infrastructure.Services.Contracts;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Infrastructure.Services
 {
     public class GroupService : IGroupService
     {
-        private readonly IGroupRepository _groupRepository;
-        private readonly IStudentRepository _studentRepository;
-        private readonly ITeacherRepository _teacherRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-
-        public GroupService(IGroupRepository groupRepository, IStudentRepository studentRepository, ITeacherRepository teacherRepository)
+        public GroupService(IUnitOfWork unitOfWork)
         {
-            _groupRepository = groupRepository;
-            _studentRepository = studentRepository;
-            _teacherRepository = teacherRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<StudentDetailsDto?> GetStudentByEmailAsync(string email)
         {
-            var student = await _studentRepository.GetUserByEmailAsync(email);
+            var student = await _unitOfWork.Students.GetUserByEmailAsync(email);
             if (student == null)
                 return null;
 
@@ -39,17 +36,31 @@ namespace backend.Infrastructure.Services
         public async Task<GroupDetailsDto> CreateGroupAsync(string creatorEmail, CreateGroupDto groupDto)
         {
             // Validate that all student emails exist
-            var creatorStudent = await _studentRepository.GetUserByEmailAsync(creatorEmail);
+            var creatorStudent = await _unitOfWork.Students.GetUserByEmailAsync(creatorEmail);
             if (creatorStudent == null)
                 throw new ApplicationException("Creator student not found");
+
+            // Check if creator is already in a supervised group
+            var creatorSupervisedGroupCheck = await _unitOfWork.Groups.IsStudentInSupervisedGroupAsync(creatorStudent.Id);
+            if (creatorSupervisedGroupCheck.InSupervisedGroup)
+            {
+                throw new ApplicationException($"You are already a member of supervised group '{creatorSupervisedGroupCheck.GroupName}' with supervisor {creatorSupervisedGroupCheck.SupervisorName} and cannot create or join another group.");
+            }
 
             var memberStudents = new List<Student> { creatorStudent };
 
             foreach (var email in groupDto.MemberEmails)
             {
-                var student = await _studentRepository.GetUserByEmailAsync(email);
+                var student = await _unitOfWork.Students.GetUserByEmailAsync(email);
                 if (student == null)
                     throw new ApplicationException($"Student with email {email} not found");
+
+                // Check if this student is already in a supervised group
+                var memberSupervisedGroupCheck = await _unitOfWork.Groups.IsStudentInSupervisedGroupAsync(student.Id);
+                if (memberSupervisedGroupCheck.InSupervisedGroup)
+                {
+                    throw new ApplicationException($"Student {student.FullName} is already a member of supervised group '{memberSupervisedGroupCheck.GroupName}' with supervisor {memberSupervisedGroupCheck.SupervisorName} and cannot join another group.");
+                }
 
                 memberStudents.Add(student);
             }
@@ -80,7 +91,8 @@ namespace backend.Infrastructure.Services
                 });
             }
 
-            var createdGroup = await _groupRepository.CreateGroupAsync(group);
+            var createdGroup = await _unitOfWork.Groups.CreateGroupAsync(group);
+            await _unitOfWork.SaveChangesAsync(); // Save changes here
 
             // Convert to DTO
             return new GroupDetailsDto
@@ -101,7 +113,7 @@ namespace backend.Infrastructure.Services
 
         public async Task<List<GroupDetailsDto>> GetStudentGroupsAsync(int studentId)
         {
-            var groups = await _groupRepository.GetStudentGroupsAsync(studentId);
+            var groups = await _unitOfWork.Groups.GetStudentGroupsAsync(studentId);
             var result = new List<GroupDetailsDto>();
 
             foreach (var group in groups)
@@ -112,16 +124,12 @@ namespace backend.Infrastructure.Services
             return result;
         }
 
-
         public async Task<GroupDetailsDto?> GetGroupByIdAsync(int groupId)
         {
-            var group = await _groupRepository.GetGroupByIdAsync(groupId);
+            var group = await _unitOfWork.Groups.GetGroupByIdAsync(groupId);
             return group == null ? null : await MapGroupToDto(group);
         }
 
-        
-
-        // Infrastructure/Services/GroupService.cs
         private async Task<GroupDetailsDto> MapGroupToDto(Group group)
         {
             var dto = new GroupDetailsDto
@@ -145,7 +153,7 @@ namespace backend.Infrastructure.Services
             // If a teacher is assigned, get their name
             if (group.TeacherId.HasValue)
             {
-                var teacher = await _teacherRepository.GetTeacherByIdAsync(group.TeacherId.Value);
+                var teacher = await _unitOfWork.Teachers.GetTeacherByIdAsync(group.TeacherId.Value);
                 if (teacher != null)
                 {
                     dto.TeacherName = teacher.FullName;
@@ -155,10 +163,9 @@ namespace backend.Infrastructure.Services
             return dto;
         }
 
-
         public async Task<List<TeacherDetailsDto>> GetAllTeachersAsync()
         {
-            var teachers = await _teacherRepository.GetAllTeachersAsync();
+            var teachers = await _unitOfWork.Teachers.GetAllTeachersAsync();
             return teachers.Select(t => new TeacherDetailsDto
             {
                 Id = t.Id,
@@ -173,21 +180,23 @@ namespace backend.Infrastructure.Services
 
         public async Task<bool> RequestTeacherSupervisionAsync(SupervisionRequestDto request)
         {
-            var group = await _groupRepository.GetGroupByIdAsync(request.GroupId);
+            var group = await _unitOfWork.Groups.GetGroupByIdAsync(request.GroupId);
             if (group == null)
                 throw new ApplicationException("Group not found");
 
-            var teacher = await _teacherRepository.GetTeacherByIdAsync(request.TeacherId);
+            var teacher = await _unitOfWork.Teachers.GetTeacherByIdAsync(request.TeacherId);
             if (teacher == null)
                 throw new ApplicationException("Teacher not found");
 
             group.SupervisionStatus = GroupSupervisionStatus.Requested;
-            return await _groupRepository.UpdateGroupSupervisionRequestAsync(group, request.TeacherId, request.Message);
+            var result = await _unitOfWork.Groups.UpdateGroupSupervisionRequestAsync(group, request.TeacherId, request.Message);
+            await _unitOfWork.SaveChangesAsync(); // Save changes here
+            return result;
         }
 
         public async Task<List<TeacherSupervisionRequestDto>> GetTeacherSupervisionRequestsAsync(int teacherId)
         {
-            var requests = await _groupRepository.GetSupervisionRequestsForTeacherAsync(teacherId);
+            var requests = await _unitOfWork.Groups.GetSupervisionRequestsForTeacherAsync(teacherId);
 
             return requests.Select(r => new TeacherSupervisionRequestDto
             {
@@ -210,12 +219,12 @@ namespace backend.Infrastructure.Services
 
         public async Task<GroupDetailsDto> RespondToSupervisionRequestAsync(int teacherId, SupervisionResponseDto response)
         {
-            var group = await _groupRepository.GetGroupByIdAsync(response.GroupId);
+            var group = await _unitOfWork.Groups.GetGroupByIdAsync(response.GroupId);
             if (group == null)
                 throw new ApplicationException("Group not found");
 
             // Find the corresponding supervision request
-            var supervisionRequest = await _groupRepository.GetSupervisionRequestByGroupIdAndTeacherIdAsync(
+            var supervisionRequest = await _unitOfWork.Groups.GetSupervisionRequestByGroupIdAndTeacherIdAsync(
                 response.GroupId, teacherId);
 
             if (supervisionRequest == null)
@@ -228,22 +237,24 @@ namespace backend.Infrastructure.Services
             if (response.IsApproved)
             {
                 group.TeacherId = teacherId;
-                await _teacherRepository.IncrementAssignedGroupsAsync(teacherId);
+                await _unitOfWork.Teachers.IncrementAssignedGroupsAsync(teacherId);
             }
 
             // Mark the request as processed
             supervisionRequest.IsProcessed = true;
 
-            await _groupRepository.UpdateGroupAsync(group);
+            await _unitOfWork.Groups.UpdateGroupAsync(group);
 
-            // Return updated group details - add await here
+            // Save all changes as a single transaction
+            await _unitOfWork.SaveChangesAsync();
+
+            // Return updated group details
             return await MapGroupToDto(group);
         }
 
-
         public async Task<IEnumerable<GroupDetailsDto>> GetTeacherGroupsAsync(int teacherId)
         {
-            var groups = await _groupRepository.GetGroupsByTeacherIdAsync(teacherId);
+            var groups = await _unitOfWork.Groups.GetGroupsByTeacherIdAsync(teacherId);
             var result = new List<GroupDetailsDto>();
 
             // Process each group one by one and await the results
@@ -255,11 +266,9 @@ namespace backend.Infrastructure.Services
             return result;
         }
 
-
-        // Infrastructure/Services/GroupService.cs
         public async Task<TeacherDetailsDto?> GetTeacherByIdAsync(int teacherId)
         {
-            var teacher = await _teacherRepository.GetTeacherByIdAsync(teacherId);
+            var teacher = await _unitOfWork.Teachers.GetTeacherByIdAsync(teacherId);
             if (teacher == null)
                 return null;
 
@@ -272,6 +281,85 @@ namespace backend.Infrastructure.Services
                 areaOfSpecialization = teacher.AreaOfSpecialization,
                 officeLocation = teacher.OfficeLocation,
                 AssignedGroups = teacher.AssignedGroups
+            };
+        }
+
+
+       
+
+        public async Task CleanupOtherGroupsAsync(int acceptedGroupId)
+        {
+            try
+            {
+                // Get the group that was accepted
+                var acceptedGroup = await _unitOfWork.Groups.GetGroupByIdAsync(acceptedGroupId);
+
+                if (acceptedGroup == null)
+                    throw new ApplicationException("Accepted group not found");
+
+                // Get all student IDs from the accepted group
+                var studentIds = acceptedGroup.Members.Select(m => m.StudentId).ToList();
+
+                // Find all other groups that these students are part of (except the accepted one)
+                var groupsToDelete = new List<Group>();
+
+                foreach (var studentId in studentIds)
+                {
+                    var studentGroups = await _unitOfWork.Groups.GetStudentGroupsAsync(studentId);
+                    var otherGroups = studentGroups.Where(g => g.Id != acceptedGroupId).ToList();
+                    groupsToDelete.AddRange(otherGroups);
+                }
+
+                // Make sure we have unique groups
+                groupsToDelete = groupsToDelete.DistinctBy(g => g.Id).ToList();
+
+                // Delete all these groups and their related entities
+                foreach (var group in groupsToDelete)
+                {
+                    // Delete all supervision requests for this group
+                    await _unitOfWork.Groups.DeleteSupervisionRequestsForGroupAsync(group.Id);
+
+                    // Delete the group (this should cascade delete group members)
+                    await _unitOfWork.Groups.DeleteGroupAsync(group.Id);
+                }
+
+                // Save all changes together
+                await _unitOfWork.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException($"Failed to clean up other groups: {ex.Message}", ex);
+            }
+        }
+
+        public async Task<StudentDetailsDto?> GetStudentByIdAsync(int studentId)
+        {
+            // First, try to find the student
+            var student = await _unitOfWork.Students.GetStudentByIdAsync(studentId);
+            if (student == null)
+                return null;
+
+            return new StudentDetailsDto
+            {
+                Id = student.Id,
+                FullName = student.FullName,
+                Email = student.Email,
+                EnrollmentNumber = student.EnrollmentNumber,
+                Department = student.Department
+            };
+        }
+
+        
+
+        public async Task<StudentSupervisionStatusDto> GetStudentSupervisionStatusAsync(int studentId)
+        {
+            var supervisionStatus = await _unitOfWork.Groups.IsStudentInSupervisedGroupAsync(studentId);
+
+            return new StudentSupervisionStatusDto
+            {
+                IsInSupervisedGroup = supervisionStatus.InSupervisedGroup,
+                GroupName = supervisionStatus.GroupName,
+                SupervisorName = supervisionStatus.SupervisorName
             };
         }
 

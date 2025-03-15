@@ -8,6 +8,9 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using backend.Core.Settings;
+using backend.Infrastructure.Data.UnitOfWork;
+using backend.Infrastructure.Data.UnitOfWork.Contract;
+using backend.Hubs;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -112,21 +115,22 @@ builder.Services.AddAuthorization(options =>
 
 
 // Register Services and Repositories
-builder.Services.AddScoped<IAdminRepository, AdminRepository>();
-builder.Services.AddScoped<ITeacherRepository, TeacherRepository>();
-builder.Services.AddScoped<IStudentRepository, StudentRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>(); 
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 builder.Services.AddScoped<IGroupService, GroupService>();
 builder.Services.AddScoped<IUserManagementRepository, UserManagementRepository>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
+builder.Services.AddScoped<IChatService, ChatService>();
 
 
 // Add Controllers
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSignalR();
 
 var app = builder.Build();
 
@@ -143,7 +147,17 @@ app.UseCors("AllowAngular");
 // These two must be in this order
 app.UseAuthentication();
 app.UseAuthorization();
+app.Use(async (context, next) =>
+{
+    var token = context.Request.Query["access_token"];
+    if (!string.IsNullOrEmpty(token) && context.Request.Path.StartsWithSegments("/api/chatHub"))
+    {
+        context.Request.Headers.Add("Authorization", $"Bearer {token}");
+    }
 
+    await next();
+});
+app.MapHub<ChatHub>("/api/chatHub");
 app.MapControllers();
 
 

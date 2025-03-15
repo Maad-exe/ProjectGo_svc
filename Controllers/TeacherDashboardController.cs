@@ -45,7 +45,10 @@ namespace backend.Controllers
             }
 
             [HttpPost("respond-to-request")]
-            public async Task<IActionResult> RespondToRequest([FromBody] SupervisionResponseDto response)
+       
+        public async Task<IActionResult> RespondToSupervisionRequest([FromBody] SupervisionResponseDto response)
+        {
+            try
             {
                 var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
                 if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out int teacherId))
@@ -53,23 +56,22 @@ namespace backend.Controllers
                     return BadRequest("Invalid teacher ID in token");
                 }
 
-                _logger.LogInformation($"Teacher {teacherId} responding to supervision request for group {response.GroupId}");
+                var result = await _groupService.RespondToSupervisionRequestAsync(teacherId, response);
 
-                try
+                // If supervision was approved, clean up other groups
+                if (response.IsApproved)
                 {
-                    var group = await _groupService.RespondToSupervisionRequestAsync(teacherId, response);
-                    return Ok(group);
+                    await _groupService.CleanupOtherGroupsAsync(response.GroupId);
                 }
-                catch (ApplicationException ex)
-                {
-                    return BadRequest(new { message = ex.Message });
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Error responding to supervision request");
-                    return StatusCode(500, "An error occurred while responding to the supervision request");
-                }
+
+                return Ok(result);
             }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error responding to supervision request");
+                return StatusCode(500, "An error occurred while processing your response");
+            }
+        }
 
 
         [HttpGet("my-groups")]

@@ -1,4 +1,5 @@
-﻿using backend.Core.Entities;
+﻿using Azure.Core;
+using backend.Core.Entities;
 using backend.DTOs;
 using backend.Infrastructure.Services.Contracts;
 using Microsoft.AspNetCore.Authorization;
@@ -13,10 +14,12 @@ namespace backend.Controllers
     public class GroupController : ControllerBase
     {
         private readonly IGroupService _groupService;
+        private readonly ILogger<GroupController> _logger;
 
-        public GroupController(IGroupService groupService)
+        public GroupController(IGroupService groupService, ILogger<GroupController> logger)
         {
             _groupService = groupService;
+            _logger = logger;
         }
 
         [HttpGet("student/{studentId}")]
@@ -54,6 +57,7 @@ namespace backend.Controllers
                     return BadRequest("User email not found in token");
                 }
 
+                
                 var group = await _groupService.CreateGroupAsync(userEmail, groupDto);
                 return CreatedAtAction(nameof(GetGroupById), new { groupId = group.Id }, group);
             }
@@ -105,6 +109,62 @@ namespace backend.Controllers
             }
 
             return Ok(resultDict);
+        }
+
+        [HttpPost("cleanup/{acceptedGroupId}")]
+       
+        public async Task<IActionResult> CleanupGroups(int acceptedGroupId)
+        {
+            try
+            {
+                await _groupService.CleanupOtherGroupsAsync(acceptedGroupId);
+                return Ok(new { success = true, message = "Successfully cleaned up other groups" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error cleaning up groups");
+                return StatusCode(500, "Failed to clean up groups");
+            }
+        }
+
+      
+        [HttpGet("student/{studentId}/supervision-status")]
+        public async Task<IActionResult> CheckStudentSupervisionStatus(int studentId)
+        {
+            try
+            {
+                // Verify user is authorized to access this student's data
+                var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+                if (userIdClaim == null || int.Parse(userIdClaim) != studentId)
+                {
+                    return Forbid();
+                }
+
+                // Get student details to verify existence
+                var student = await _groupService.GetStudentByIdAsync(studentId);
+                if (student == null)
+                    return NotFound(new { message = "Student not found" });
+
+                // Check if student is in a supervised group using the service
+                var supervisedGroupStatus = await _groupService.GetStudentSupervisionStatusAsync(studentId);
+
+                if (supervisedGroupStatus.IsInSupervisedGroup)
+                {
+                    return Ok(new
+                    {
+                        isInSupervisedGroup = true,
+                        groupName = supervisedGroupStatus.GroupName,
+                        supervisorName = supervisedGroupStatus.SupervisorName
+                    });
+                }
+
+                return Ok(new { isInSupervisedGroup = false });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error checking student supervision status");
+                return StatusCode(500, new { message = "An error occurred while checking student supervision status" });
+            }
         }
 
 

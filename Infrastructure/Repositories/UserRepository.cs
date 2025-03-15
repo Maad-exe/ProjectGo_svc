@@ -19,10 +19,24 @@ namespace backend.Infrastructure.Repositories
             return await _context.Users.SingleOrDefaultAsync(u => u.Email == email);
         }
 
+        public async Task<User?> GetUserByIdAsync(int userId)
+        {
+            return await _context.Users.FindAsync(userId);
+        }
+
         public async Task AddUserAsync(User user)
         {
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
+            _context.Users.Add(user);
+        }
+
+        public async Task<bool> ExistsByEmailAsync(string email)
+        {
+            return await _context.Users.AnyAsync(u => u.Email == email);
+        }
+
+        public async Task<bool> ExistsByEmailExceptAsync(string email, int userId)
+        {
+            return await _context.Users.AnyAsync(u => u.Email == email && u.Id != userId);
         }
     }
 }

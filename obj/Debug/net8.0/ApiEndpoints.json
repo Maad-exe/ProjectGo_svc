@@ -74,6 +74,58 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "backend.Controllers.ChatController",
+    "Method": "GetGroupMessages",
+    "RelativePath": "api/chat/group/{groupId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "groupId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "limit",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "before",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.ChatController",
+    "Method": "MarkMessagesAsRead",
+    "RelativePath": "api/chat/mark-read/{groupId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "groupId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.ChatController",
+    "Method": "GetUnreadMessagesCount",
+    "RelativePath": "api/chat/unread-count",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "backend.Controllers.GroupController",
     "Method": "CreateGroup",
     "RelativePath": "api/groups",
@@ -107,8 +159,40 @@
   },
   {
     "ContainingType": "backend.Controllers.GroupController",
+    "Method": "CleanupGroups",
+    "RelativePath": "api/groups/cleanup/{acceptedGroupId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "acceptedGroupId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.GroupController",
     "Method": "GetStudentGroups",
     "RelativePath": "api/groups/student/{studentId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "studentId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.GroupController",
+    "Method": "CheckStudentSupervisionStatus",
+    "RelativePath": "api/groups/student/{studentId}/supervision-status",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -165,7 +249,7 @@
   },
   {
     "ContainingType": "backend.Controllers.TeacherDashboardController",
-    "Method": "RespondToRequest",
+    "Method": "RespondToSupervisionRequest",
     "RelativePath": "api/teacher-dashboard/respond-to-request",
     "HttpMethod": "POST",
     "IsController": true,

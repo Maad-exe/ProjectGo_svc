@@ -17,6 +17,7 @@ namespace backend.Core.Entities
         public int? TeacherId { get; set; }
         public Teacher? Teacher { get; set; }
         public GroupSupervisionStatus SupervisionStatus { get; set; } = GroupSupervisionStatus.None;
+        public ICollection<ChatMessage> Messages { get; set; } = new List<ChatMessage>();
     
 }
 

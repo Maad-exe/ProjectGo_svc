@@ -1,6 +1,6 @@
 ﻿namespace backend.DTOs
 {
-    // DTOs/SupervisionDtos.cs
+  
     public class SupervisionRequestDto
     {
         public int GroupId { get; set; }
@@ -23,6 +23,13 @@
         public DateTime RequestedAt { get; set; }
         public List<StudentDetailsDto> GroupMembers { get; set; } = new();
         public string Message { get; set; } = string.Empty;
+    }
+
+    public class StudentSupervisionStatusDto
+    {
+        public bool IsInSupervisedGroup { get; set; }
+        public string GroupName { get; set; } = string.Empty;
+        public string SupervisorName { get; set; } = string.Empty;
     }
 
 }

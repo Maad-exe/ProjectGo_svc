@@ -366,4 +366,6 @@ C:\Users\hamma\source\repos\RAMDAN\obj\Debug\net8.0\backend.genruntimeconfig.cac
 C:\Users\hamma\source\repos\RAMDAN\obj\Debug\net8.0\ref\backend.dll
 C:\Users\hamma\source\repos\RAMDAN\bin\Debug\net8.0\Microsoft.AspNetCore.Cryptography.Internal.dll
 C:\Users\hamma\source\repos\RAMDAN\bin\Debug\net8.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\hamma\source\repos\RAMDAN\bin\Debug\net8.0\Newtonsoft.Json.dll
+C:\Users\hamma\source\repos\RAMDAN\bin\Debug\net8.0\System.Net.WebSockets.WebSocketProtocol.dll
 C:\Users\hamma\source\repos\RAMDAN\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

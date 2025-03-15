@@ -35,6 +35,10 @@ namespace backend.Controllers
         [HttpPost("register/admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterAdminDto request)
         {
+            if (await _authService.EmailExistsAsync(request.Email))
+            {
+                return BadRequest(new { message = "Email address is already in use" });
+            }
             var admin = new Admin
             {
                 FullName = request.FullName,
@@ -51,6 +55,10 @@ namespace backend.Controllers
         [HttpPost("register/teacher")]
         public async Task<IActionResult> RegisterTeacher([FromBody] RegisterTeacherDto request)
         {
+            if (await _authService.EmailExistsAsync(request.Email))
+            {
+                return BadRequest(new { message = "Email address is already in use" });
+            }
             var teacher = new Teacher
             {
                 FullName = request.FullName,
@@ -71,6 +79,18 @@ namespace backend.Controllers
         [HttpPost("register/student")]
         public async Task<IActionResult> RegisterStudent([FromBody] RegisterStudentDto request)
         {
+
+            // Check if email already exists
+            if (await _authService.EmailExistsAsync(request.Email))
+            {
+                return BadRequest(new { message = "Email address is already in use" });
+            }
+
+            // Check if enrollment number already exists
+            if (await _authService.EnrollmentNumberExistsAsync(request.EnrollmentNumber))
+            {
+                return BadRequest(new { message = "Enrollment number is already in use" });
+            }
             var student = new Student
             {
                 FullName = request.FullName,

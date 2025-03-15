@@ -22,6 +22,39 @@ namespace backend.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("backend.Core.Entities.ChatMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("ChatMessages");
+                });
+
             modelBuilder.Entity("backend.Core.Entities.Group", b =>
                 {
                     b.Property<int>("Id")
@@ -153,6 +186,9 @@ namespace backend.Migrations
                 {
                     b.HasBaseType("backend.Core.Entities.User");
 
+                    b.Property<bool>("IsSuperAdmin")
+                        .HasColumnType("bit");
+
                     b.ToTable("Admins", (string)null);
 
                     b.HasData(
@@ -163,7 +199,8 @@ namespace backend.Migrations
                             Email = "admin@projectgo.com",
                             FullName = "System Admin",
                             PasswordHash = "$2a$11$dGbHOWMrjr/9KPl9LxongumrriovDITJb6H42vb3s4RpHAYURKE4C",
-                            Role = 0
+                            Role = 0,
+                            IsSuperAdmin = true
                         });
                 });
 
@@ -202,6 +239,25 @@ namespace backend.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.ToTable("Teachers", (string)null);
+                });
+
+            modelBuilder.Entity("backend.Core.Entities.ChatMessage", b =>
+                {
+                    b.HasOne("backend.Core.Entities.Group", "Group")
+                        .WithMany("Messages")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Core.Entities.User", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("backend.Core.Entities.Group", b =>
@@ -282,6 +338,8 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Core.Entities.Group", b =>
                 {
                     b.Navigation("Members");
+
+                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }

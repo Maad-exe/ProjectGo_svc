@@ -22,7 +22,7 @@ namespace backend.Infrastructure.Repositories
         public async Task AddTeacherAsync(Teacher teacher)
         {
             _context.Teachers.Add(teacher);
-            await _context.SaveChangesAsync();
+         
         }
 
         public async Task<List<Teacher>> GetAllTeachersAsync()
@@ -43,7 +43,7 @@ namespace backend.Infrastructure.Repositories
             if (teacher != null)
             {
                 teacher.AssignedGroups++;
-                await _context.SaveChangesAsync();
+               
             }
         }
     }

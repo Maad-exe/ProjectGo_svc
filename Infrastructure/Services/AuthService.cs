@@ -2,6 +2,8 @@
 using backend.Core.Enums;
 using backend.Core.Settings;
 using backend.DTOs;
+using backend.Infrastructure.Data.UnitOfWork.Contract;
+using backend.Infrastructure.Repositories;
 using backend.Infrastructure.Repositories.Contracts;
 using backend.Infrastructure.Services.Contracts;
 using Microsoft.IdentityModel.Tokens;
@@ -14,28 +16,33 @@ namespace backend.Infrastructure.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly IAdminRepository _adminRepository;
-        private readonly ITeacherRepository _teacherRepository;
-        private readonly IStudentRepository _studentRepository;
-        private readonly IConfiguration _configuration;
+       private readonly IUnitOfWork _unitOfWork;
+       private readonly IConfiguration _configuration;
 
-        public AuthService(
-            IAdminRepository adminRepository,
-            ITeacherRepository teacherRepository,
-            IStudentRepository studentRepository,
-            IConfiguration configuration)
+        public AuthService(IUnitOfWork unitOfWork, IConfiguration configuration)
         {
-            _adminRepository = adminRepository;
-            _teacherRepository = teacherRepository;
-            _studentRepository = studentRepository;
+            _unitOfWork = unitOfWork;
             _configuration = configuration;
         }
+
+        public async Task<bool> EmailExistsAsync(string email)
+        {
+            // Use UnitOfWork to access repository
+            return await _unitOfWork.Users.ExistsByEmailAsync(email);
+        }
+
+        public async Task<bool> EnrollmentNumberExistsAsync(string enrollmentNumber)
+        {
+            // Need to implement in StudentRepository
+            return await _unitOfWork.Students.ExistsByEnrollmentNumberAsync(enrollmentNumber);
+        }
+
         public async Task<string?> AuthenticateAsync(string email, string password)
         {
             // Cast each result to User before using null-coalescing operator
-            User? user = (await _adminRepository.GetUserByEmailAsync(email) as User) ??
-                         (await _teacherRepository.GetUserByEmailAsync(email) as User) ??
-                         (await _studentRepository.GetUserByEmailAsync(email) as User);
+            User? user = (await _unitOfWork.Admins.GetUserByEmailAsync(email) as User) ??
+                             (await _unitOfWork.Teachers.GetUserByEmailAsync(email) as User) ??
+                         (await _unitOfWork.Students.GetUserByEmailAsync(email) as User);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             {
@@ -49,19 +56,22 @@ namespace backend.Infrastructure.Services
         public async Task RegisterAdminAsync(Admin admin)
         {
             admin.PasswordHash = BCrypt.Net.BCrypt.HashPassword(admin.PasswordHash);
-            await _adminRepository.AddAdminAsync(admin);
+            await _unitOfWork.Admins.AddAdminAsync(admin);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task RegisterTeacherAsync(Teacher teacher)
         {
             teacher.PasswordHash = BCrypt.Net.BCrypt.HashPassword(teacher.PasswordHash);
-            await _teacherRepository.AddTeacherAsync(teacher);
+            await _unitOfWork.Teachers.AddTeacherAsync(teacher);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task RegisterStudentAsync(Student student)
         {
             student.PasswordHash = BCrypt.Net.BCrypt.HashPassword(student.PasswordHash);
-            await _studentRepository.AddStudentAsync(student);
+            await _unitOfWork.Students.AddStudentAsync(student);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         private string GenerateJwtToken(User user)
@@ -104,7 +114,7 @@ namespace backend.Infrastructure.Services
 
         public async Task<List<TeacherDetailsDto>> GetAllTeachersAsync()
         {
-            var teachers = await _teacherRepository.GetAllTeachersAsync();
+            var teachers = await _unitOfWork.Teachers.GetAllTeachersAsync();
             return teachers.Select(t => new TeacherDetailsDto
             {  
                 Id = t.Id,

@@ -67,6 +67,24 @@ namespace backend.Controllers
 
             try
             {
+                // Check if the new email already exists for another user
+                if (await _userManagementService.EmailExistsExceptUserAsync(userUpdateDto.Email, userId))
+                {
+                    return BadRequest(new { message = "Email address is already in use by another user" });
+                }
+
+                // If this is a student and enrollment number is being updated, check uniqueness
+                if (userUpdateDto.AdditionalInfo != null &&
+                    userUpdateDto.AdditionalInfo.TryGetValue("EnrollmentNumber", out var enrollmentNumber) &&
+                    enrollmentNumber != null)
+                {
+                    if (await _userManagementService.EnrollmentNumberExistsExceptStudentAsync(
+                        enrollmentNumber.ToString(), userId))
+                    {
+                        return BadRequest(new { message = "Enrollment number is already in use by another student" });
+                    }
+                }
+
                 await _userManagementService.UpdateUserAsync(userUpdateDto);
                 return Ok(new { message = "User updated successfully" });
             }
@@ -81,6 +99,7 @@ namespace backend.Controllers
                 return StatusCode(500, "Internal server error");
             }
         }
+
 
         [HttpDelete("{userId}")]
         public async Task<IActionResult> DeleteUser(int userId)

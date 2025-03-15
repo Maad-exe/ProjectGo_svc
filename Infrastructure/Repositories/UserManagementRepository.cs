@@ -26,7 +26,7 @@ namespace backend.Infrastructure.Repositories
                     Email = u.Email,
                     Role = u.Role.ToString(),
                     CreatedAt = u.CreatedAt,
-                    AdditionalInfo = GetAdditionalInfoStatic(u) // Use the static method
+                    AdditionalInfo = GetAdditionalInfoStatic(u)
                 })
                 .ToListAsync();
 
@@ -44,7 +44,7 @@ namespace backend.Infrastructure.Repositories
                     Email = u.Email,
                     Role = u.Role.ToString(),
                     CreatedAt = u.CreatedAt,
-                    AdditionalInfo = GetAdditionalInfoStatic(u) // Use the static method
+                    AdditionalInfo = GetAdditionalInfoStatic(u) 
                 })
                 .FirstOrDefaultAsync();
 
@@ -75,6 +75,7 @@ namespace backend.Infrastructure.Repositories
                     break;
             }
 
+            // Save changes
             await _context.SaveChangesAsync();
         }
 
@@ -84,6 +85,7 @@ namespace backend.Infrastructure.Repositories
             if (user == null)
                 throw new ApplicationException("User not found");
 
+
             // Remove associated group memberships if user is a student
             if (user is Student student)
             {
@@ -92,7 +94,7 @@ namespace backend.Infrastructure.Repositories
             }
 
             _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+            
         }
 
         private static object? GetAdditionalInfoStatic(User user)
@@ -116,5 +118,15 @@ namespace backend.Infrastructure.Repositories
             }
             return null;
         }
+        public async Task<bool> EmailExistsExceptUserAsync(string email, int userId)
+        {
+            return await _context.Users.AnyAsync(u => u.Email == email && u.Id != userId);
+        }
+
+        public async Task<bool> EnrollmentNumberExistsExceptStudentAsync(string enrollmentNumber, int studentId)
+        {
+            return await _context.Students.AnyAsync(s => s.EnrollmentNumber == enrollmentNumber && s.Id != studentId);
+        }
+
     }
 }

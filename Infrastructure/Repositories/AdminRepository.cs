@@ -22,7 +22,7 @@ namespace backend.Infrastructure.Repositories
         public async Task AddAdminAsync(Admin admin)
         {
             _context.Admins.Add(admin);
-            await _context.SaveChangesAsync();
+           
         }
     }
 }

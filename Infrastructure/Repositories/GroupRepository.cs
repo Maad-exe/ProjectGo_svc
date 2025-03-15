@@ -1,5 +1,6 @@
 ﻿using backend.Core.Entities;
 using backend.Core.Enums;
+using backend.DTOs;
 using backend.Infrastructure.Data;
 using backend.Infrastructure.Repositories.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,7 @@ namespace backend.Infrastructure.Repositories
         public async Task<Group> CreateGroupAsync(Group group)
         {
             _context.Groups.Add(group);
-            await _context.SaveChangesAsync();
+         
             return group;
         }
 
@@ -45,7 +46,7 @@ namespace backend.Infrastructure.Repositories
                 .AnyAsync(gm => gm.StudentId == studentId && gm.GroupId == groupId);
         }
 
-        // Infrastructure/Repositories/GroupRepository.cs
+        //
         public async Task<bool> UpdateGroupSupervisionRequestAsync(Group group, int teacherId, string message)
         {
             // Update group status
@@ -63,7 +64,7 @@ namespace backend.Infrastructure.Repositories
             };
 
             _context.SupervisionRequests.Add(request);
-            await _context.SaveChangesAsync();
+     
             return true;
         }
 
@@ -80,7 +81,7 @@ namespace backend.Infrastructure.Repositories
         public async Task UpdateGroupAsync(Group group)
         {
             _context.Groups.Update(group);
-            await _context.SaveChangesAsync();
+          
         }
 
         public async Task<SupervisionRequest?> GetSupervisionRequestByGroupIdAndTeacherIdAsync(int groupId, int teacherId)
@@ -98,5 +99,69 @@ namespace backend.Infrastructure.Repositories
                 .Where(g => g.TeacherId == teacherId)
                 .ToListAsync();
         }
+
+        public async Task DeleteSupervisionRequestsForGroupAsync(int groupId)
+        {
+            var requests = await _context.SupervisionRequests
+                .Where(sr => sr.GroupId == groupId)
+                .ToListAsync();
+
+            _context.SupervisionRequests.RemoveRange(requests);
+        }
+
+        public async Task DeleteGroupAsync(int groupId)
+        {
+            // First delete group members to avoid any foreign key constraint issues
+            var members = await _context.GroupMembers
+                .Where(gm => gm.GroupId == groupId)
+                .ToListAsync();
+
+            _context.GroupMembers.RemoveRange(members);
+
+            // Now delete the group itself
+            var group = await _context.Groups.FindAsync(groupId);
+            if (group != null)
+            {
+                _context.Groups.Remove(group);
+            }
+        }
+
+
+        public async Task<(bool InSupervisedGroup, string GroupName, string SupervisorName)> IsStudentInSupervisedGroupAsync(int studentId)
+        {
+            var supervisedGroup = await _context.GroupMembers
+                .Where(gm => gm.StudentId == studentId)
+                .Include(gm => gm.Group)
+                    .ThenInclude(g => g.Teacher)
+                .FirstOrDefaultAsync(gm =>
+                    gm.Group.SupervisionStatus == GroupSupervisionStatus.Approved &&
+                    gm.Group.TeacherId != null);
+
+            if (supervisedGroup != null)
+            {
+                return (
+                    InSupervisedGroup: true,
+                    GroupName: supervisedGroup.Group.Name,
+                    SupervisorName: supervisedGroup.Group.Teacher?.FullName ?? "Unknown"
+                );
+            }
+
+            return (InSupervisedGroup: false, GroupName: "", SupervisorName: "");
+        }
+
+      
+
+        public async Task<StudentSupervisionStatusDto> GetStudentSupervisionStatusAsync(int studentId)
+        {
+            var supervisionStatus = await IsStudentInSupervisedGroupAsync(studentId);
+
+            return new StudentSupervisionStatusDto
+            {
+                IsInSupervisedGroup = supervisionStatus.InSupervisedGroup,
+                GroupName = supervisionStatus.GroupName,
+                SupervisorName = supervisionStatus.SupervisorName
+            };
+        }
+
     }
 }

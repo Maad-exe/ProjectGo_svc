@@ -14,6 +14,10 @@ namespace backend.Infrastructure.Services.Contracts
         Task<GroupDetailsDto> RespondToSupervisionRequestAsync(int teacherId, SupervisionResponseDto response);
         Task<IEnumerable<GroupDetailsDto>> GetTeacherGroupsAsync(int teacherId);
         Task<TeacherDetailsDto?> GetTeacherByIdAsync(int teacherId);
+        Task CleanupOtherGroupsAsync(int acceptedGroupId);
+        Task<StudentDetailsDto?> GetStudentByIdAsync(int studentId);
+        Task<StudentSupervisionStatusDto> GetStudentSupervisionStatusAsync(int studentId);
     
-}
+
+    }
 }
