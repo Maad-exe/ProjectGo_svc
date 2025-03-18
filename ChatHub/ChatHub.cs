@@ -45,7 +45,11 @@ namespace backend.Hubs
             if (await _chatService.IsUserAuthorizedForGroup(userId, groupId))
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, $"group_{groupId}");
-                await Clients.Caller.SendAsync("JoinedGroup", groupId);
+
+                // Get messages with current user ID to correctly calculate read status
+                var messages = await _chatService.GetGroupMessages(groupId, null, null, userId);
+
+                await Clients.Caller.SendAsync("JoinedGroup", groupId, messages);
             }
         }
 
@@ -103,17 +107,7 @@ namespace backend.Hubs
             }
         }
 
-        public async Task UserIsTyping(int groupId)
-        {
-            var userId = int.Parse(Context.User.FindFirstValue("UserId")); var userName = Context.User.FindFirstValue("name") ?? Context.User.FindFirstValue(ClaimTypes.Name);
-
-            // Send typing notification to everyone except the current user
-            if (await _chatService.IsUserAuthorizedForGroup(userId, groupId))
-            {
-                await Clients.OthersInGroup($"group_{groupId}").SendAsync("UserTyping", userId, userName, groupId);
-            }
-        }
-
+    
         public async Task NotifyTyping(int groupId)
         {
             var userId = int.Parse(Context.User.FindFirstValue("UserId"));

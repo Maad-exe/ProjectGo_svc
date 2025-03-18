@@ -42,7 +42,8 @@ namespace backend.Controllers
                     return Forbid();
                 }
 
-                var messages = await _chatService.GetGroupMessages(groupId, limit, before);
+                // Pass the userId as currentUserId to get proper read status
+                var messages = await _chatService.GetGroupMessages(groupId, limit, before, userId);
                 _logger.LogInformation($"Returning {messages.Count} messages for group {groupId}");
                 return Ok(messages);
             }
@@ -52,6 +53,7 @@ namespace backend.Controllers
                 return StatusCode(500, new { message = "An error occurred while retrieving messages", details = ex.Message });
             }
         }
+
 
         [HttpPost("mark-read/{groupId}")]
         public async Task<IActionResult> MarkMessagesAsRead(int groupId)
@@ -90,12 +92,45 @@ namespace backend.Controllers
             catch (Microsoft.Data.SqlClient.SqlException sqlEx)
             {
                 _logger.LogError(sqlEx, $"SQL error getting unread message count: {sqlEx.Message}");
-                return StatusCode(500, new { message = "A database error occurred while retrieving unread count", error = "Database error" });
+
+                // Be more specific about CTE errors
+                if (sqlEx.Message.Contains("Incorrect syntax near the keyword 'WITH'"))
+                {
+                    return StatusCode(500, new
+                    {
+                        message = "SQL syntax error in CTE. Please ensure statements are properly terminated with semicolons.",
+                        error = "SQL syntax error"
+                    });
+                }
+
+                return StatusCode(500, new { message = "A database error occurred", error = "Database error" });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, $"Error getting unread message count: {ex.Message}");
                 return StatusCode(500, new { message = "An error occurred while retrieving unread count", error = "General error" });
+            }
+        }
+
+
+        // Add to ChatController.cs
+        [HttpGet("unread-by-group")]
+        public async Task<IActionResult> GetUnreadMessagesByGroup()
+        {
+            try
+            {
+                var userId = int.Parse(User.FindFirstValue("UserId"));
+                _logger.LogInformation($"User {userId} requesting unread messages by group");
+
+                var unreadByGroup = await _chatService.GetUnreadMessagesByGroup(userId);
+                _logger.LogInformation($"Returning unread messages by group for user {userId}");
+
+                return Ok(unreadByGroup);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Error getting unread messages by group: {ex.Message}");
+                return StatusCode(500, new { message = "An error occurred while retrieving unread messages by group" });
             }
         }
 

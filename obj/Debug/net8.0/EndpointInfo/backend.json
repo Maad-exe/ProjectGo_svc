@@ -215,6 +215,18 @@
         }
       }
     },
+    "/api/chat/unread-by-group": {
+      "get": {
+        "tags": [
+          "Chat"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/groups/student/{studentId}": {
       "get": {
         "tags": [

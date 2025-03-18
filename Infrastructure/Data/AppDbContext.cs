@@ -18,7 +18,7 @@ namespace backend.Infrastructure.Data
 
         public DbSet<SupervisionRequest> SupervisionRequests { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
-
+        public DbSet<MessageReadStatus> MessageReadStatuses { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -69,6 +69,24 @@ namespace backend.Infrastructure.Data
                     .WithMany()
                     .HasForeignKey(e => e.SenderId)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+
+            modelBuilder.Entity<MessageReadStatus>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity.HasOne(e => e.Message)
+                    .WithMany(m => m.ReadStatuses)
+                    .HasForeignKey(e => e.MessageId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.User)
+                    .WithMany()
+                    .HasForeignKey(e => e.UserId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(e => new { e.MessageId, e.UserId }).IsUnique();
             });
 
             modelBuilder.Entity<Admin>().HasData(new Admin

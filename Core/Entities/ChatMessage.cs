@@ -7,10 +7,13 @@
         public int SenderId { get; set; }
         public string Content { get; set; }
         public DateTime Timestamp { get; set; }
-        public bool IsRead { get; set; }
+        public bool IsRead { get; set; } // Keep for backward compatibility
 
         // Navigation properties
         public Group Group { get; set; }
         public User Sender { get; set; }
+
+        // New navigation property
+        public ICollection<MessageReadStatus> ReadStatuses { get; set; } = new List<MessageReadStatus>();
     }
 }

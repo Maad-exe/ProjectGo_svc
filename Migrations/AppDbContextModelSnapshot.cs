@@ -112,6 +112,33 @@ namespace backend.Migrations
                     b.ToTable("GroupMembers", (string)null);
                 });
 
+            modelBuilder.Entity("backend.Core.Entities.MessageReadStatus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("MessageId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ReadAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("MessageId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("MessageReadStatuses");
+                });
+
             modelBuilder.Entity("backend.Core.Entities.SupervisionRequest", b =>
                 {
                     b.Property<int>("Id")
@@ -289,6 +316,25 @@ namespace backend.Migrations
                     b.Navigation("Student");
                 });
 
+            modelBuilder.Entity("backend.Core.Entities.MessageReadStatus", b =>
+                {
+                    b.HasOne("backend.Core.Entities.ChatMessage", "Message")
+                        .WithMany("ReadStatuses")
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Core.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Message");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("backend.Core.Entities.SupervisionRequest", b =>
                 {
                     b.HasOne("backend.Core.Entities.Group", "Group")
@@ -333,6 +379,11 @@ namespace backend.Migrations
                         .HasForeignKey("backend.Core.Entities.Teacher", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("backend.Core.Entities.ChatMessage", b =>
+                {
+                    b.Navigation("ReadStatuses");
                 });
 
             modelBuilder.Entity("backend.Core.Entities.Group", b =>

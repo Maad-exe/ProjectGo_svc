@@ -117,6 +117,16 @@
   },
   {
     "ContainingType": "backend.Controllers.ChatController",
+    "Method": "GetUnreadMessagesByGroup",
+    "RelativePath": "api/chat/unread-by-group",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.ChatController",
     "Method": "GetUnreadMessagesCount",
     "RelativePath": "api/chat/unread-count",
     "HttpMethod": "GET",

@@ -1,4 +1,7 @@
-﻿using backend.Core.Entities;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using backend.Core.Entities;
 using backend.DTOs;
 
 namespace backend.Infrastructure.Repositories.Contracts
@@ -13,5 +16,11 @@ namespace backend.Infrastructure.Repositories.Contracts
         Task MarkMessagesAsReadAsync(int userId, int groupId);
         Task<int> GetUnreadMessagesCountAsync(int userId);
         Task<List<int>> GetUserGroupIdsAsync(int userId);
+
+        // Add these missing methods from ChatRepository implementation
+        Task<List<int>> GetGroupMemberIdsAsync(int groupId);
+        Task<Dictionary<int, int>> GetUnreadMessagesByGroupAsync(int userId);
+        Task<List<MessageReadStatusDto>> GetMessageReadStatusAsync(int messageId);
+        Task<GroupInfoDto> GetGroupInfoAsync(int groupId);
     }
 }
