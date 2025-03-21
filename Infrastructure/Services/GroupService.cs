@@ -1,9 +1,9 @@
 ﻿using backend.Core.Entities;
 using backend.Core.Enums;
 using backend.DTOs;
-using backend.Infrastructure.Data.UnitOfWork.Contract;
 using backend.Infrastructure.Repositories.Contracts;
 using backend.Infrastructure.Services.Contracts;
+using backend.UnitOfWork.Contract;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Infrastructure.Services

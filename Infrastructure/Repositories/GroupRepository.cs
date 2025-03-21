@@ -163,5 +163,11 @@ namespace backend.Infrastructure.Repositories
             };
         }
 
+        public async Task<List<Group>> GetAllGroupsAsync()
+        {
+            return await _context.Groups
+                .Include(g => g.Members)
+                .ToListAsync();
+        }
     }
 }

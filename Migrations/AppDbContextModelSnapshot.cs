@@ -22,6 +22,47 @@ namespace backend.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("StudentEvaluation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("EvaluatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Feedback")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("GroupEvaluationId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsComplete")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ObtainedMarks")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RubricId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StudentId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupEvaluationId");
+
+                    b.HasIndex("RubricId");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("StudentEvaluations");
+                });
+
             modelBuilder.Entity("backend.Core.Entities.ChatMessage", b =>
                 {
                     b.Property<int>("Id")
@@ -137,6 +178,228 @@ namespace backend.Migrations
                         .IsUnique();
 
                     b.ToTable("MessageReadStatuses");
+                });
+
+            modelBuilder.Entity("backend.Core.Entities.PanelManagement.EvaluationEvent", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("RubricId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalMarks")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Weight")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RubricId");
+
+                    b.ToTable("EvaluationEvents");
+                });
+
+            modelBuilder.Entity("backend.Core.Entities.PanelManagement.EvaluationRubric", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EvaluationRubrics");
+                });
+
+            modelBuilder.Entity("backend.Core.Entities.PanelManagement.GroupEvaluation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Comments")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("PanelId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ScheduledDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EventId");
+
+                    b.HasIndex("PanelId");
+
+                    b.HasIndex("GroupId", "EventId")
+                        .IsUnique();
+
+                    b.ToTable("GroupEvaluations");
+                });
+
+            modelBuilder.Entity("backend.Core.Entities.PanelManagement.Panel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Panels");
+                });
+
+            modelBuilder.Entity("backend.Core.Entities.PanelManagement.PanelMember", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("IsHead")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("PanelId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TeacherId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeacherId");
+
+                    b.HasIndex("PanelId", "TeacherId")
+                        .IsUnique();
+
+                    b.ToTable("PanelMembers");
+                });
+
+            modelBuilder.Entity("backend.Core.Entities.PanelManagement.RubricCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MaxScore")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RubricId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Weight")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RubricId");
+
+                    b.ToTable("RubricCategories");
+                });
+
+            modelBuilder.Entity("backend.Core.Entities.PanelManagement.StudentCategoryScore", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("EvaluatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("EvaluatorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Feedback")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StudentEvaluationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("StudentEvaluationId");
+
+                    b.ToTable("StudentCategoryScores");
                 });
 
             modelBuilder.Entity("backend.Core.Entities.SupervisionRequest", b =>
@@ -265,7 +528,37 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("StudentEvaluationId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("StudentEvaluationId");
+
                     b.ToTable("Teachers", (string)null);
+                });
+
+            modelBuilder.Entity("StudentEvaluation", b =>
+                {
+                    b.HasOne("backend.Core.Entities.PanelManagement.GroupEvaluation", "GroupEvaluation")
+                        .WithMany("StudentEvaluations")
+                        .HasForeignKey("GroupEvaluationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Core.Entities.PanelManagement.EvaluationRubric", "Rubric")
+                        .WithMany()
+                        .HasForeignKey("RubricId");
+
+                    b.HasOne("backend.Core.Entities.Student", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GroupEvaluation");
+
+                    b.Navigation("Rubric");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("backend.Core.Entities.ChatMessage", b =>
@@ -335,6 +628,91 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("backend.Core.Entities.PanelManagement.EvaluationEvent", b =>
+                {
+                    b.HasOne("backend.Core.Entities.PanelManagement.EvaluationRubric", "Rubric")
+                        .WithMany()
+                        .HasForeignKey("RubricId");
+
+                    b.Navigation("Rubric");
+                });
+
+            modelBuilder.Entity("backend.Core.Entities.PanelManagement.GroupEvaluation", b =>
+                {
+                    b.HasOne("backend.Core.Entities.PanelManagement.EvaluationEvent", "Event")
+                        .WithMany()
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Core.Entities.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Core.Entities.PanelManagement.Panel", "Panel")
+                        .WithMany()
+                        .HasForeignKey("PanelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Event");
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Panel");
+                });
+
+            modelBuilder.Entity("backend.Core.Entities.PanelManagement.PanelMember", b =>
+                {
+                    b.HasOne("backend.Core.Entities.PanelManagement.Panel", "Panel")
+                        .WithMany("Members")
+                        .HasForeignKey("PanelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Core.Entities.Teacher", "Teacher")
+                        .WithMany("PanelMemberships")
+                        .HasForeignKey("TeacherId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Panel");
+
+                    b.Navigation("Teacher");
+                });
+
+            modelBuilder.Entity("backend.Core.Entities.PanelManagement.RubricCategory", b =>
+                {
+                    b.HasOne("backend.Core.Entities.PanelManagement.EvaluationRubric", "Rubric")
+                        .WithMany("Categories")
+                        .HasForeignKey("RubricId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Rubric");
+                });
+
+            modelBuilder.Entity("backend.Core.Entities.PanelManagement.StudentCategoryScore", b =>
+                {
+                    b.HasOne("backend.Core.Entities.PanelManagement.RubricCategory", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("StudentEvaluation", "StudentEvaluation")
+                        .WithMany("CategoryScores")
+                        .HasForeignKey("StudentEvaluationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("StudentEvaluation");
+                });
+
             modelBuilder.Entity("backend.Core.Entities.SupervisionRequest", b =>
                 {
                     b.HasOne("backend.Core.Entities.Group", "Group")
@@ -379,6 +757,17 @@ namespace backend.Migrations
                         .HasForeignKey("backend.Core.Entities.Teacher", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("StudentEvaluation", null)
+                        .WithMany("Evaluators")
+                        .HasForeignKey("StudentEvaluationId");
+                });
+
+            modelBuilder.Entity("StudentEvaluation", b =>
+                {
+                    b.Navigation("CategoryScores");
+
+                    b.Navigation("Evaluators");
                 });
 
             modelBuilder.Entity("backend.Core.Entities.ChatMessage", b =>
@@ -391,6 +780,26 @@ namespace backend.Migrations
                     b.Navigation("Members");
 
                     b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("backend.Core.Entities.PanelManagement.EvaluationRubric", b =>
+                {
+                    b.Navigation("Categories");
+                });
+
+            modelBuilder.Entity("backend.Core.Entities.PanelManagement.GroupEvaluation", b =>
+                {
+                    b.Navigation("StudentEvaluations");
+                });
+
+            modelBuilder.Entity("backend.Core.Entities.PanelManagement.Panel", b =>
+                {
+                    b.Navigation("Members");
+                });
+
+            modelBuilder.Entity("backend.Core.Entities.Teacher", b =>
+                {
+                    b.Navigation("PanelMemberships");
                 });
 #pragma warning restore 612, 618
         }

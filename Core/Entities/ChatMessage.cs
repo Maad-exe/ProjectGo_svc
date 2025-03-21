@@ -1,4 +1,6 @@
-﻿namespace backend.Core.Entities
+﻿
+namespace backend.Core.Entities
+
 {
     public class ChatMessage
     {
@@ -6,8 +8,8 @@
         public int GroupId { get; set; }
         public int SenderId { get; set; }
         public string Content { get; set; }
-        public DateTime Timestamp { get; set; }
-        public bool IsRead { get; set; } // Keep for backward compatibility
+        public DateTime Timestamp { get; set; } = DateTime.Now;
+        public bool IsRead { get; set; }  // Keep for backward compatibility
 
         // Navigation properties
         public Group Group { get; set; }

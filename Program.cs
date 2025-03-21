@@ -8,9 +8,9 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using backend.Core.Settings;
-using backend.Infrastructure.Data.UnitOfWork;
-using backend.Infrastructure.Data.UnitOfWork.Contract;
 using backend.Hubs;
+using backend.UnitOfWork;
+using backend.UnitOfWork.Contract;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -114,17 +114,28 @@ builder.Services.AddAuthorization(options =>
 });
 
 
-// Register Services and Repositories
+// Register all repositories 
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+builder.Services.AddScoped<ITeacherRepository, TeacherRepository>();
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+builder.Services.AddScoped<IUserManagementRepository, UserManagementRepository>();
+builder.Services.AddScoped<IChatRepository, ChatRepository>();
+builder.Services.AddScoped<IPanelRepository, PanelRepository>();
+builder.Services.AddScoped<IEvaluationRepository, EvaluationRepository>();
+builder.Services.AddScoped<IRubricRepository, RubricRepository>();
 
+// Register UnitOfWork
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+// Register services
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IGroupRepository, GroupRepository>();
 builder.Services.AddScoped<IGroupService, GroupService>();
-builder.Services.AddScoped<IUserManagementRepository, UserManagementRepository>();
 builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<IChatService, ChatService>();
-
+builder.Services.AddScoped<IPanelService, PanelService>();
+builder.Services.AddScoped<IEvaluationService, EvaluationService>();
 
 // Add Controllers
 builder.Services.AddControllers();

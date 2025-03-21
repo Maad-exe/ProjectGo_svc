@@ -13,6 +13,8 @@ namespace backend.Hubs
     {
         private readonly IChatService _chatService;
         private readonly ILogger<ChatHub> _logger;
+        private static readonly Dictionary<string, DateTime> _userTypingState = new Dictionary<string, DateTime>();
+        private static readonly object _typingLock = new object();
 
         public ChatHub(IChatService chatService, ILogger<ChatHub> logger)
         {
@@ -36,6 +38,45 @@ namespace backend.Hubs
             }
 
             await base.OnConnectedAsync();
+        }
+
+        public override async Task OnDisconnectedAsync(Exception exception)
+        {
+            try
+            {
+                var userId = int.Parse(Context.User.FindFirstValue("UserId"));
+
+                // Get all keys for this user
+                List<string> keysToRemove = new List<string>();
+                lock (_typingLock)
+                {
+                    keysToRemove = _userTypingState.Keys
+                        .Where(k => k.StartsWith($"{userId}:"))
+                        .ToList();
+
+                    // Remove all typing states for this user
+                    foreach (var key in keysToRemove)
+                    {
+                        _userTypingState.Remove(key);
+
+                        // Extract groupId from the key
+                        string[] parts = key.Split(':');
+                        if (parts.Length == 2 && int.TryParse(parts[1], out int groupId))
+                        {
+                            // Notify others that user stopped typing (fire and forget)
+                            Clients.OthersInGroup($"group_{groupId}").SendAsync("UserStoppedTyping", userId, groupId);
+                        }
+                    }
+                }
+
+                _logger.LogInformation($"Client disconnected: {Context.ConnectionId}, User: {userId}");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in OnDisconnectedAsync");
+            }
+
+            await base.OnDisconnectedAsync(exception);
         }
 
         public async Task JoinGroup(int groupId)
@@ -107,18 +148,66 @@ namespace backend.Hubs
             }
         }
 
-    
+
         public async Task NotifyTyping(int groupId)
         {
-            var userId = int.Parse(Context.User.FindFirstValue("UserId"));
-            var userName = Context.User.FindFirstValue("name") ?? Context.User.FindFirstValue(ClaimTypes.Name);
-
-            if (await _chatService.IsUserAuthorizedForGroup(userId, groupId))
+            try
             {
-                await Clients.OthersInGroup($"group_{groupId}").SendAsync("UserTyping", userId, userName, groupId);
+                var userId = int.Parse(Context.User.FindFirstValue("UserId"));
+                var userName = Context.User.FindFirstValue("name") ?? Context.User.FindFirstValue(ClaimTypes.Name);
+
+                if (await _chatService.IsUserAuthorizedForGroup(userId, groupId))
+                {
+                    var typingKey = $"{userId}:{groupId}";
+                    var now = DateTime.Now;
+
+                    lock (_typingLock)
+                    {
+                        _userTypingState[typingKey] = now;
+                    }
+
+                    _logger.LogDebug($"User {userId} ({userName}) is typing in group {groupId}");
+                    await Clients.OthersInGroup($"group_{groupId}").SendAsync("UserTyping", userId, userName, groupId);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in NotifyTyping");
             }
         }
 
+        // Improved StopTyping method
+        public async Task StopTyping(int groupId)
+        {
+            try
+            {
+                var userId = int.Parse(Context.User.FindFirstValue("UserId"));
+                var userName = Context.User.FindFirstValue("name") ?? Context.User.FindFirstValue(ClaimTypes.Name);
+
+                if (await _chatService.IsUserAuthorizedForGroup(userId, groupId))
+                {
+                    var typingKey = $"{userId}:{groupId}";
+
+                    lock (_typingLock)
+                    {
+                        _userTypingState.Remove(typingKey);
+                    }
+
+                    _logger.LogDebug($"User {userId} ({userName}) stopped typing in group {groupId}");
+                    await Clients.OthersInGroup($"group_{groupId}").SendAsync("UserStoppedTyping", userId, groupId);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in StopTyping method");
+            }
+        }
+
+
+
+        // Add this method to your ChatHub class
+
+       
         public Task Ping()
         {
             // Simple ping method to keep the connection alive

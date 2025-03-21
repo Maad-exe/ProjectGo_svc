@@ -107,7 +107,7 @@ namespace backend.Infrastructure.Repositories
 
         public async Task MarkMessagesAsReadAsync(int userId, int groupId)
         {
-            var now = DateTime.UtcNow;
+            var now = DateTime.Now;
 
             // Get unread messages in the group, excluding those sent by the current user
             var unreadMessages = await _context.ChatMessages

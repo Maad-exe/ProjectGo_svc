@@ -1,4 +1,5 @@
 ﻿using backend.Core.Entities;
+using backend.Core.Entities.PanelManagement;
 using backend.Core.Enums;
 using backend.Infrastructure.Data.Configuration;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,17 @@ namespace backend.Infrastructure.Data
         public DbSet<SupervisionRequest> SupervisionRequests { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<MessageReadStatus> MessageReadStatuses { get; set; }
+
+        public DbSet<Panel> Panels { get; set; }
+        public DbSet<PanelMember> PanelMembers { get; set; }
+        public DbSet<EvaluationEvent> EvaluationEvents { get; set; }
+        public DbSet<GroupEvaluation> GroupEvaluations { get; set; }
+        public DbSet<StudentEvaluation> StudentEvaluations { get; set; }
+
+        public DbSet<EvaluationRubric> EvaluationRubrics { get; set; }
+        public DbSet<RubricCategory> RubricCategories { get; set; }
+        public DbSet<StudentCategoryScore> StudentCategoryScores { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -29,6 +41,7 @@ namespace backend.Infrastructure.Data
             modelBuilder.Entity<Student>().ToTable("Students");
             modelBuilder.Entity<Group>().ToTable("Groups");
             modelBuilder.Entity<GroupMember>().ToTable("GroupMembers");
+
 
             // Configure relationships
             modelBuilder.Entity<GroupMember>()
@@ -89,6 +102,23 @@ namespace backend.Infrastructure.Data
                 entity.HasIndex(e => new { e.MessageId, e.UserId }).IsUnique();
             });
 
+
+
+            // Configure unique constraint to prevent duplicate teacher assignments in a panel
+            modelBuilder.Entity<PanelMember>()
+                .HasIndex(pm => new { pm.PanelId, pm.TeacherId })
+                .IsUnique();
+
+            // Configure the GroupEvaluation to ensure a group can only be evaluated 
+            // once by a panel for a specific event
+            modelBuilder.Entity<GroupEvaluation>()
+                .HasIndex(ge => new { ge.GroupId, ge.EventId })
+                .IsUnique();
+
+            // Configure RubricCategory to ensure weights add up to 1.0 (100%)
+            modelBuilder.Entity<RubricCategory>()
+                .HasIndex(rc => rc.RubricId);
+
             modelBuilder.Entity<Admin>().HasData(new Admin
             {
                 Id = 1,
@@ -102,7 +132,7 @@ namespace backend.Infrastructure.Data
 
 
 
-            
+
 
             // Apply configurations
             modelBuilder.ApplyConfiguration(new UserConfiguration());

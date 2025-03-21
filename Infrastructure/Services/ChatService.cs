@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using backend.Core.Entities;
 using backend.Core.Enums;
 using backend.DTOs;
-using backend.Infrastructure.Data.UnitOfWork.Contract;
 using backend.Infrastructure.Services.Contracts;
+using backend.UnitOfWork.Contract;
 
 namespace backend.Infrastructure.Services
 {
@@ -86,7 +86,7 @@ namespace backend.Infrastructure.Services
                 GroupId = groupId,
                 SenderId = userId,
                 Content = content,
-                Timestamp = DateTime.UtcNow,
+                Timestamp = DateTime.Now,
                 IsRead = false
             };
 

@@ -10,7 +10,7 @@ namespace backend.Core.Entities
         [Required]
         public string Name { get; set; } = string.Empty;
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         // Navigation properties
         public List<GroupMember> Members { get; set; } = new List<GroupMember>();
@@ -33,6 +33,6 @@ namespace backend.Core.Entities
         public Student Student { get; set; } = null!;
 
         public bool IsCreator { get; set; } = false;
-        public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
+        public DateTime JoinedAt { get; set; } = DateTime.Now;
     }
 }

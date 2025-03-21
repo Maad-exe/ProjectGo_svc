@@ -2,10 +2,10 @@
 using backend.Core.Enums;
 using backend.Core.Settings;
 using backend.DTOs;
-using backend.Infrastructure.Data.UnitOfWork.Contract;
 using backend.Infrastructure.Repositories;
 using backend.Infrastructure.Repositories.Contracts;
 using backend.Infrastructure.Services.Contracts;
+using backend.UnitOfWork.Contract;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;

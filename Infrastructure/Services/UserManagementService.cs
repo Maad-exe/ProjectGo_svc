@@ -1,8 +1,8 @@
 ﻿using backend.DTOs;
-using backend.Infrastructure.Data.UnitOfWork.Contract;
 using backend.Infrastructure.Repositories;
 using backend.Infrastructure.Repositories.Contracts;
 using backend.Infrastructure.Services.Contracts;
+using backend.UnitOfWork.Contract;
 
 namespace backend.Infrastructure.Services
 {
