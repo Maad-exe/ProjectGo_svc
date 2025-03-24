@@ -16,8 +16,6 @@ namespace backend.Infrastructure.Repositories.Contracts
         Task MarkMessagesAsReadAsync(int userId, int groupId);
         Task<int> GetUnreadMessagesCountAsync(int userId);
         Task<List<int>> GetUserGroupIdsAsync(int userId);
-
-        // Add these missing methods from ChatRepository implementation
         Task<List<int>> GetGroupMemberIdsAsync(int groupId);
         Task<Dictionary<int, int>> GetUnreadMessagesByGroupAsync(int userId);
         Task<List<MessageReadStatusDto>> GetMessageReadStatusAsync(int messageId);
