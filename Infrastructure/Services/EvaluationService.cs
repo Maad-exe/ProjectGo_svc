@@ -561,8 +561,6 @@ namespace backend.Infrastructure.Services
         }
 
 
-        // Infrastructure/Services/EvaluationService.cs
-        // Add implementation of rubric methods and enhanced evaluation:
 
         public async Task<EvaluationRubricDto> CreateRubricAsync(CreateRubricDto rubricDto)
         {
