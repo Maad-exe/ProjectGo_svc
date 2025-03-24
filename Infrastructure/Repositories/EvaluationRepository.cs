@@ -148,8 +148,7 @@ namespace backend.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        // Infrastructure/Repositories/EvaluationRepository.cs
-        // Add implementation of new methods:
+       
 
         public async Task<bool> HasTeacherEvaluatedStudentAsync(int teacherId, int studentEvaluationId)
         {
