@@ -1,4 +1,6 @@
-﻿namespace backend.DTOs.PanelManagementDTOs
+﻿using backend.Core.Enums;
+
+namespace backend.DTOs.PanelManagementDTOs
 {
     public class EvaluationEventDto
     {
@@ -10,6 +12,7 @@
         public bool IsActive { get; set; }
         public DateTime CreatedAt { get; set; }
         public double Weight { get; set; } = 1.0;
+        public EventType Type { get; set; } = EventType.Final;
         public int? RubricId { get; set; }
         public string? RubricName { get; set; }
     }
@@ -20,7 +23,9 @@
         public string Description { get; set; } = string.Empty;
         public DateTime Date { get; set; }
         public int TotalMarks { get; set; }
+        public bool IsActive { get; set; }
         public double Weight { get; set; } = 1.0;
+        public EventType Type { get; set; } = EventType.Final;
         public int? RubricId { get; set; }
     }
 
@@ -31,8 +36,7 @@
         public DateTime Date { get; set; }
         public int TotalMarks { get; set; }
         public bool IsActive { get; set; }
-
-
+        public EventType Type { get; set; } = EventType.Final;
         public double Weight { get; set; }
         public int? RubricId { get; set; }
     }
@@ -74,6 +78,7 @@
         public DateTime? EventDate { get; set; }
         public int? TotalMarks { get; set; }
         public decimal? PercentageObtained { get; set; }
+        public bool IsComplete { get; set; }
     }
 
     public class EvaluateStudentDto
@@ -114,9 +119,10 @@
         public double CategoryWeight { get; set; }
         public int Score { get; set; }
         public int MaxScore { get; set; }
-        public double WeightedScore { get; set; } // Score * Weight
-        public string Feedback { get; set; } = string.Empty;
-        public EvaluatorDto Evaluator { get; set; } = new EvaluatorDto();
+        public double WeightedScore { get; set; }
+        public string? Feedback { get; set; }
+        public EvaluatorDto? Evaluator { get; set; }
+        public List<CategoryEvaluatorDetailDto> EvaluatorDetails { get; set; } = new List<CategoryEvaluatorDetailDto>();
     }
 
     public class EvaluatorDto
@@ -124,4 +130,24 @@
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
     }
+
+    public class EventEvaluationTypeDto
+    {
+        public int GroupEvaluationId { get; set; }
+        public int EventId { get; set; }
+        public string EventName { get; set; } = string.Empty;
+        public bool HasRubric { get; set; }
+        public int? RubricId { get; set; }
+        public int TotalMarks { get; set; }
+    }
+
+    public class CategoryEvaluatorDetailDto
+    {
+        public int EvaluatorId { get; set; }
+        public string EvaluatorName { get; set; } = string.Empty;
+        public int Score { get; set; }
+        public string? Feedback { get; set; }
+        public DateTime EvaluatedAt { get; set; }
+    }
+
 }

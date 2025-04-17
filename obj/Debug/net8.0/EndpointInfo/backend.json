@@ -624,6 +624,269 @@
         }
       }
     },
+    "/api/admin/panels/byEvent/{eventId}": {
+      "get": {
+        "tags": [
+          "AdminPanel"
+        ],
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PanelDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PanelDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PanelDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/rubrics": {
+      "post": {
+        "tags": [
+          "AdminRubric"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRubricDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRubricDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRubricDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationRubricDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationRubricDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationRubricDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "AdminRubric"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/admin/rubrics/{id}": {
+      "get": {
+        "tags": [
+          "AdminRubric"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationRubricDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationRubricDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationRubricDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AdminRubric"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRubricDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRubricDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateRubricDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationRubricDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationRubricDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationRubricDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "AdminRubric"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/admin/rubrics/normalized-grades": {
+      "get": {
+        "tags": [
+          "AdminRubric"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NormalizedGradeDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NormalizedGradeDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NormalizedGradeDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/auth/login": {
       "post": {
         "tags": [
@@ -1011,6 +1274,44 @@
         }
       }
     },
+    "/api/groups/with-supervisors": {
+      "get": {
+        "tags": [
+          "Group"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GroupDetailsDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GroupDetailsDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GroupDetailsDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/student/evaluations/progress": {
       "get": {
         "tags": [
@@ -1071,6 +1372,38 @@
               "text/json": {
                 "schema": {
                   "$ref": "#/components/schemas/StudentPerformanceDashboardDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/student/evaluations/final-grade": {
+      "get": {
+        "tags": [
+          "StudentEvaluation"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "number",
+                  "format": "double"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "number",
+                  "format": "double"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "number",
+                  "format": "double"
                 }
               }
             }
@@ -1489,6 +1822,166 @@
         }
       }
     },
+    "/api/teacher/evaluations/evaluate-student-with-rubric": {
+      "post": {
+        "tags": [
+          "TeacherEvaluation"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvaluateStudentDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvaluateStudentDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvaluateStudentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnhancedStudentEvaluationDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnhancedStudentEvaluationDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnhancedStudentEvaluationDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/teacher/evaluations/group-evaluations/{id}/students": {
+      "get": {
+        "tags": [
+          "TeacherEvaluation"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StudentDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StudentDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StudentDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/teacher/evaluations/event-evaluation-type/{id}": {
+      "get": {
+        "tags": [
+          "TeacherEvaluation"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventEvaluationTypeDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventEvaluationTypeDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventEvaluationTypeDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/teacher/evaluations/evaluations/{id}/complete": {
+      "put": {
+        "tags": [
+          "TeacherEvaluation"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/users": {
       "get": {
         "tags": [
@@ -1647,6 +2140,94 @@
         },
         "additionalProperties": false
       },
+      "CategoryEvaluatorDetailDto": {
+        "type": "object",
+        "properties": {
+          "evaluatorId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "evaluatorName": {
+            "type": "string",
+            "nullable": true
+          },
+          "score": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "feedback": {
+            "type": "string",
+            "nullable": true
+          },
+          "evaluatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CategoryScoreDetailDto": {
+        "type": "object",
+        "properties": {
+          "categoryId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "categoryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "categoryWeight": {
+            "type": "number",
+            "format": "double"
+          },
+          "score": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxScore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "weightedScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "feedback": {
+            "type": "string",
+            "nullable": true
+          },
+          "evaluator": {
+            "$ref": "#/components/schemas/EvaluatorDto"
+          },
+          "evaluatorDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryEvaluatorDetailDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CategoryScoreDto": {
+        "type": "object",
+        "properties": {
+          "categoryId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "score": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "feedback": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CreateEventDto": {
         "type": "object",
         "properties": {
@@ -1665,6 +2246,21 @@
           "totalMarks": {
             "type": "integer",
             "format": "int32"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "weight": {
+            "type": "number",
+            "format": "double"
+          },
+          "type": {
+            "$ref": "#/components/schemas/EventType"
+          },
+          "rubricId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1707,6 +2303,119 @@
         },
         "additionalProperties": false
       },
+      "CreateRubricCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "weight": {
+            "type": "number",
+            "format": "double"
+          },
+          "maxScore": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateRubricDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateRubricCategoryDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EnhancedStudentEvaluationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "studentId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "studentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "obtainedMarks": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "feedback": {
+            "type": "string",
+            "nullable": true
+          },
+          "evaluatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "eventName": {
+            "type": "string",
+            "nullable": true
+          },
+          "eventDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "totalMarks": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "percentageObtained": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "isComplete": {
+            "type": "boolean"
+          },
+          "categoryScores": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryScoreDetailDto"
+            },
+            "nullable": true
+          },
+          "evaluators": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvaluatorDto"
+            },
+            "nullable": true
+          },
+          "weightedScore": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
       "EvaluateStudentDto": {
         "type": "object",
         "properties": {
@@ -1720,10 +2429,18 @@
           },
           "obtainedMarks": {
             "type": "integer",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "feedback": {
             "type": "string",
+            "nullable": true
+          },
+          "categoryScores": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryScoreDto"
+            },
             "nullable": true
           }
         },
@@ -1758,6 +2475,98 @@
           "createdAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "weight": {
+            "type": "number",
+            "format": "double"
+          },
+          "type": {
+            "$ref": "#/components/schemas/EventType"
+          },
+          "rubricId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "rubricName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EvaluationRubricDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RubricCategoryDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EvaluatorDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EventEvaluationTypeDto": {
+        "type": "object",
+        "properties": {
+          "groupEvaluationId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eventId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eventName": {
+            "type": "string",
+            "nullable": true
+          },
+          "hasRubric": {
+            "type": "boolean"
+          },
+          "rubricId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "totalMarks": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1850,6 +2659,53 @@
           "percentage": {
             "type": "number",
             "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EventType": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "GroupDetailsDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StudentDetailsDto"
+            },
+            "nullable": true
+          },
+          "teacherId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "teacherName": {
+            "type": "string",
+            "nullable": true
+          },
+          "supervisionStatus": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1949,6 +2805,28 @@
           "password": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NormalizedGradeDto": {
+        "type": "object",
+        "properties": {
+          "studentId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "studentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "rawGrade": {
+            "type": "number",
+            "format": "double"
+          },
+          "normalizedGrade": {
+            "type": "number",
+            "format": "double"
           }
         },
         "additionalProperties": false
@@ -2069,6 +2947,90 @@
         },
         "additionalProperties": false
       },
+      "RubricCategoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "weight": {
+            "type": "number",
+            "format": "double"
+          },
+          "maxScore": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "StudentDetailsDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "enrollmentNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "department": {
+            "type": "string",
+            "nullable": true
+          },
+          "isCreator": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "StudentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "enrollmentNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "department": {
+            "type": "string",
+            "nullable": true
+          },
+          "isEvaluated": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "StudentEvaluationDto": {
         "type": "object",
         "properties": {
@@ -2114,6 +3076,9 @@
             "type": "number",
             "format": "double",
             "nullable": true
+          },
+          "isComplete": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -2257,6 +3222,18 @@
           },
           "isActive": {
             "type": "boolean"
+          },
+          "type": {
+            "$ref": "#/components/schemas/EventType"
+          },
+          "weight": {
+            "type": "number",
+            "format": "double"
+          },
+          "rubricId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2283,6 +3260,56 @@
             "items": {
               "type": "integer",
               "format": "int32"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateRubricCategoryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "weight": {
+            "type": "number",
+            "format": "double"
+          },
+          "maxScore": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateRubricDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UpdateRubricCategoryDto"
             },
             "nullable": true
           }

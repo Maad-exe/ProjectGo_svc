@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/admin/evaluations")]
     public class AdminEvaluationController : ControllerBase

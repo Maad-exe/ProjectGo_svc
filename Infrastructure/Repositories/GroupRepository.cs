@@ -10,10 +10,11 @@ namespace backend.Infrastructure.Repositories
     public class GroupRepository : IGroupRepository
     {
         private readonly AppDbContext _context;
-
-        public GroupRepository(AppDbContext context)
+        private readonly ILogger<GroupRepository> _logger;
+        public GroupRepository(AppDbContext context, ILogger<GroupRepository> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<Group> CreateGroupAsync(Group group)
@@ -126,30 +127,72 @@ namespace backend.Infrastructure.Repositories
             }
         }
 
-
         public async Task<(bool InSupervisedGroup, string GroupName, string SupervisorName)> IsStudentInSupervisedGroupAsync(int studentId)
         {
-            var supervisedGroup = await _context.GroupMembers
-                .Where(gm => gm.StudentId == studentId)
-                .Include(gm => gm.Group)
-                    .ThenInclude(g => g.Teacher)
-                .FirstOrDefaultAsync(gm =>
-                    gm.Group.SupervisionStatus == GroupSupervisionStatus.Approved &&
-                    gm.Group.TeacherId != null);
-
-            if (supervisedGroup != null)
+            try
             {
-                return (
-                    InSupervisedGroup: true,
-                    GroupName: supervisedGroup.Group.Name,
-                    SupervisorName: supervisedGroup.Group.Teacher?.FullName ?? "Unknown"
-                );
-            }
+                // First, let's log the student we're checking
+                _logger.LogInformation($"Checking supervision status for student {studentId}");
 
-            return (InSupervisedGroup: false, GroupName: "", SupervisorName: "");
+                var supervisedGroup = await _context.GroupMembers
+                    .Where(gm => gm.StudentId == studentId)
+                    .Include(gm => gm.Group)
+                    .ThenInclude(g => g.Teacher)
+                    .Select(gm => new
+                    {
+                        GroupId = gm.GroupId,
+                        StudentId = gm.StudentId,
+                        GroupName = gm.Group.Name,
+                        SupervisionStatus = gm.Group.SupervisionStatus,
+                        TeacherId = gm.Group.TeacherId,
+                        TeacherName = gm.Group.Teacher.FullName
+                    })
+                    .ToListAsync(); // Get all groups for logging purposes
+
+                // Log all groups found for the student
+                foreach (var group in supervisedGroup)
+                {
+                    _logger.LogInformation(
+                        "Found group for student {StudentId}: GroupId={GroupId}, Name={GroupName}, Status={Status}, TeacherId={TeacherId}",
+                        studentId,
+                        group.GroupId,
+                        group.GroupName,
+                        group.SupervisionStatus,
+                        group.TeacherId);
+                }
+
+                // Now find the supervised group if it exists
+                var approvedGroup = supervisedGroup.FirstOrDefault(g =>
+                    g.SupervisionStatus == GroupSupervisionStatus.Approved &&
+                    g.TeacherId != null);
+
+                if (approvedGroup != null)
+                {
+                    _logger.LogInformation(
+                        "Student {StudentId} is in supervised group: GroupId={GroupId}, Name={GroupName}, TeacherId={TeacherId}",
+                        studentId,
+                        approvedGroup.GroupId,
+                        approvedGroup.GroupName,
+                        approvedGroup.TeacherId);
+
+                    return (
+                        InSupervisedGroup: true,
+                        GroupName: approvedGroup.GroupName,
+                        SupervisorName: approvedGroup.TeacherName ?? "Unknown"
+                    );
+                }
+
+                _logger.LogInformation("No supervised group found for student {StudentId}", studentId);
+                return (InSupervisedGroup: false, GroupName: "", SupervisorName: "");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error checking supervision status for student {StudentId}", studentId);
+                throw;
+            }
         }
 
-      
+
 
         public async Task<StudentSupervisionStatusDto> GetStudentSupervisionStatusAsync(int studentId)
         {
@@ -169,5 +212,20 @@ namespace backend.Infrastructure.Repositories
                 .Include(g => g.Members)
                 .ToListAsync();
         }
+
+        public async Task<IEnumerable<Group>> GetGroupsWithSupervisorsAsync()
+        {
+            return await _context.Groups
+                .Include(g => g.Members)
+                    .ThenInclude(m => m.Student)
+                .Include(g => g.Teacher)
+                .Where(g => g.TeacherId != null)
+                .OrderBy(g => g.Name)
+                .ToListAsync();
+        }
+
     }
 }
+
+
+

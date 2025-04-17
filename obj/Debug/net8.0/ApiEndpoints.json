@@ -362,6 +362,161 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "backend.Controllers.AdminPanelController",
+    "Method": "GetPanelsByEventId",
+    "RelativePath": "api/admin/panels/byEvent/{eventId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "eventId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[backend.DTOs.PanelManagementDTOs.PanelDto, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "backend.Controllers.AdminRubricController",
+    "Method": "CreateRubric",
+    "RelativePath": "api/admin/rubrics",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "rubricDto",
+        "Type": "backend.DTOs.PanelManagementDTOs.CreateRubricDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "backend.DTOs.PanelManagementDTOs.EvaluationRubricDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "backend.Controllers.AdminRubricController",
+    "Method": "GetAllRubrics",
+    "RelativePath": "api/admin/rubrics",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.AdminRubricController",
+    "Method": "GetRubricById",
+    "RelativePath": "api/admin/rubrics/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "backend.DTOs.PanelManagementDTOs.EvaluationRubricDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "backend.Controllers.AdminRubricController",
+    "Method": "UpdateRubric",
+    "RelativePath": "api/admin/rubrics/{id}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "rubricDto",
+        "Type": "backend.DTOs.PanelManagementDTOs.UpdateRubricDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "backend.DTOs.PanelManagementDTOs.EvaluationRubricDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "backend.Controllers.AdminRubricController",
+    "Method": "DeleteRubric",
+    "RelativePath": "api/admin/rubrics/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.AdminRubricController",
+    "Method": "GetNormalizedGrades",
+    "RelativePath": "api/admin/rubrics/normalized-grades",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[backend.DTOs.PanelManagementDTOs.NormalizedGradeDto, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "backend.Controllers.AuthController",
     "Method": "Login",
     "RelativePath": "api/auth/login",
@@ -610,6 +765,26 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "backend.Controllers.GroupController",
+    "Method": "GetGroupsWithSupervisors",
+    "RelativePath": "api/groups/with-supervisors",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[backend.DTOs.GroupDetailsDto, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "backend.Controllers.StudentEvaluationController",
     "Method": "GetStudentDashboard",
     "RelativePath": "api/student/evaluations/dashboard",
@@ -620,6 +795,26 @@
     "ReturnTypes": [
       {
         "Type": "backend.DTOs.PanelManagementDTOs.StudentPerformanceDashboardDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "backend.Controllers.StudentEvaluationController",
+    "Method": "GetFinalGrade",
+    "RelativePath": "api/student/evaluations/final-grade",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Double",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -733,6 +928,74 @@
   },
   {
     "ContainingType": "backend.Controllers.TeacherEvaluationController",
+    "Method": "EvaluateStudentWithRubric",
+    "RelativePath": "api/teacher/evaluations/evaluate-student-with-rubric",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "evaluationDto",
+        "Type": "backend.DTOs.PanelManagementDTOs.EvaluateStudentDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "backend.DTOs.PanelManagementDTOs.EnhancedStudentEvaluationDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "backend.Controllers.TeacherEvaluationController",
+    "Method": "CompleteEvaluation",
+    "RelativePath": "api/teacher/evaluations/evaluations/{id}/complete",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.TeacherEvaluationController",
+    "Method": "GetEventEvaluationType",
+    "RelativePath": "api/teacher/evaluations/event-evaluation-type/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "backend.DTOs.PanelManagementDTOs.EventEvaluationTypeDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "backend.Controllers.TeacherEvaluationController",
     "Method": "GetGroupEvaluationById",
     "RelativePath": "api/teacher/evaluations/group-evaluations/{id}",
     "HttpMethod": "GET",
@@ -779,6 +1042,32 @@
     "ReturnTypes": [
       {
         "Type": "backend.DTOs.PanelManagementDTOs.GroupEvaluationDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "backend.Controllers.TeacherEvaluationController",
+    "Method": "GetStudentsForGroupEvaluation",
+    "RelativePath": "api/teacher/evaluations/group-evaluations/{id}/students",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[backend.DTOs.PanelManagementDTOs.StudentDto, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",

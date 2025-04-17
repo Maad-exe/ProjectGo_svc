@@ -152,6 +152,24 @@ namespace backend.Infrastructure.Services
             return group.TeacherId.Value != teacherId;
         }
 
+        public async Task<List<PanelDto>> GetPanelsByEventIdAsync(int eventId)
+        {
+            // Verify the event exists
+            var evaluationEvent = await _unitOfWork.Evaluations.GetEventByIdAsync(eventId);
+            if (evaluationEvent == null)
+                throw new ApplicationException($"Event with ID {eventId} not found");
+
+            // Get panels assigned to this event
+            var panels = await _unitOfWork.Panels.GetPanelsByEventIdAsync(eventId);
+            var result = new List<PanelDto>();
+
+            foreach (var panel in panels)
+            {
+                result.Add(await MapPanelToDto(panel));
+            }
+
+            return result;
+        }
         private async Task<PanelDto> MapPanelToDto(Panel panel)
         {
             var dto = new PanelDto

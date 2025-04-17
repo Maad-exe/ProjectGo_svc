@@ -8,7 +8,7 @@ namespace backend.Controllers
 {
     [Route("api/users")]
     [ApiController]
-    [Authorize(Policy = "AdminPolicy")]
+    //[Authorize(Policy = "AdminPolicy")]
     public class UserManagementController : ControllerBase
     {
         private readonly IUserManagementService _userManagementService;

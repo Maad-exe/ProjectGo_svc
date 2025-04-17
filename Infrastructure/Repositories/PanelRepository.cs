@@ -63,6 +63,23 @@ namespace backend.Infrastructure.Repositories
                 .Select(pm => pm.Panel)
                 .ToListAsync();
         }
+
+        public async Task<List<Panel>> GetPanelsByEventIdAsync(int eventId)
+        {
+            // Get panel IDs that are used in group evaluations for this event
+            var panelIds = await _context.GroupEvaluations
+                .Where(ge => ge.EventId == eventId)
+                .Select(ge => ge.PanelId)
+                .Distinct()
+                .ToListAsync();
+
+            // Fetch the corresponding panels with their members
+            return await _context.Panels
+                .Where(p => panelIds.Contains(p.Id))
+                .Include(p => p.Members)
+                    .ThenInclude(m => m.Teacher)
+                .ToListAsync();
+        }
     }
 }
 

@@ -13,6 +13,6 @@ namespace backend.Infrastructure.Repositories.Contracts
         Task<RubricCategory?> GetCategoryByIdAsync(int categoryId);
         Task<StudentCategoryScore> AddCategoryScoreAsync(StudentCategoryScore score);
         Task<List<StudentCategoryScore>> GetScoresByStudentEvaluationIdAsync(int studentEvaluationId);
-        Task<List<StudentCategoryScore>> GetScoresByCategoryIdAsync(int categoryId);
+         Task<List<StudentCategoryScore>> GetScoresByCategoryIdAsync(int categoryId);
     }
 }

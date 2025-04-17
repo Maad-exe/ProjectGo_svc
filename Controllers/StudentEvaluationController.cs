@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 namespace backend.Controllers
 {
-    [Authorize(Roles = "Student")]
+    //[Authorize(Roles = "Student")]
     [ApiController]
     [Route("api/student/evaluations")]
     public class StudentEvaluationController : ControllerBase

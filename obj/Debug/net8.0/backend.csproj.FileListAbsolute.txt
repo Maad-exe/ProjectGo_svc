@@ -556,3 +556,4 @@ F:\ProjectGo\Backend\ProjectGo_svc\obj\Debug\net8.0\refint\backend.dll
 F:\ProjectGo\Backend\ProjectGo_svc\obj\Debug\net8.0\backend.pdb
 F:\ProjectGo\Backend\ProjectGo_svc\obj\Debug\net8.0\backend.genruntimeconfig.cache
 F:\ProjectGo\Backend\ProjectGo_svc\obj\Debug\net8.0\ref\backend.dll
+F:\ProjectGo\Backend\ProjectGo_svc\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

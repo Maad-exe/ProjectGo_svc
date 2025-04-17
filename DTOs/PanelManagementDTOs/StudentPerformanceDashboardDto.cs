@@ -16,4 +16,16 @@
         public int TotalMarks { get; set; }
         public double Percentage { get; set; }
     }
+
+    // Add to your DTOs folder
+    public class StudentDto
+    {
+        public int Id { get; set; }
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string EnrollmentNumber { get; set; } = string.Empty;
+        public string Department { get; set; } = string.Empty;
+        public bool IsEvaluated { get; set; } = false;
+    }
+
 }

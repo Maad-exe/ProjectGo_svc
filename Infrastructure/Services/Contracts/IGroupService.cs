@@ -17,7 +17,9 @@ namespace backend.Infrastructure.Services.Contracts
         Task CleanupOtherGroupsAsync(int acceptedGroupId);
         Task<StudentDetailsDto?> GetStudentByIdAsync(int studentId);
         Task<StudentSupervisionStatusDto> GetStudentSupervisionStatusAsync(int studentId);
-    
+       
+        Task<List<GroupDetailsDto>> GetGroupsWithSupervisorsAsync();
+
 
     }
 }

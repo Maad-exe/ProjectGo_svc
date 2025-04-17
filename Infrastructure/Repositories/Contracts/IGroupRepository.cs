@@ -23,5 +23,9 @@ namespace backend.Infrastructure.Repositories.Contracts
         Task DeleteSupervisionRequestsForGroupAsync(int groupId);
         Task DeleteGroupAsync(int groupId);
         Task<List<Group>> GetAllGroupsAsync();
+
+       
+        Task<IEnumerable<Group>> GetGroupsWithSupervisorsAsync();
+
     }
 }

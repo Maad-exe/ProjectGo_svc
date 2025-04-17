@@ -21,16 +21,17 @@ namespace backend.UnitOfWork
         private IEvaluationRepository _evaluationRepository;
         private IRubricRepository _rubricRepository;
         public UnitOfWork(
-            AppDbContext context,
-            IUserRepository userRepository,
-            IStudentRepository studentRepository,
-            ITeacherRepository teacherRepository,
-            IAdminRepository adminRepository,
-            IGroupRepository groupRepository,
-            IUserManagementRepository userManagementRepository,
-            IChatRepository chatRepository,
-            IPanelRepository panelRepository,
-            IEvaluationRepository evaluationRepository)
+    AppDbContext context,
+    IUserRepository userRepository,
+    IStudentRepository studentRepository,
+    ITeacherRepository teacherRepository,
+    IAdminRepository adminRepository,
+    IGroupRepository groupRepository,
+    IUserManagementRepository userManagementRepository,
+    IChatRepository chatRepository,
+    IPanelRepository panelRepository,
+    IEvaluationRepository evaluationRepository,
+    IRubricRepository rubricRepository)
         {
             _context = context;
             _userRepository = userRepository;
@@ -42,6 +43,7 @@ namespace backend.UnitOfWork
             _chatRepository = chatRepository;
             _panelRepository = panelRepository;
             _evaluationRepository = evaluationRepository;
+            _rubricRepository = rubricRepository;  // Add this line
         }
 
         public IUserRepository Users => _userRepository;

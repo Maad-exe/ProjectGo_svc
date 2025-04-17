@@ -11,5 +11,6 @@ namespace backend.Infrastructure.Repositories.Contracts
         Task DeletePanelAsync(int panelId);
         Task<bool> IsTeacherInPanelAsync(int panelId, int teacherId);
         Task<List<Panel>> GetPanelsByTeacherIdAsync(int teacherId);
+        Task<List<Panel>> GetPanelsByEventIdAsync(int eventId);
     }
 }

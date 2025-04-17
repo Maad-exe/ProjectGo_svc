@@ -1,6 +1,7 @@
 ﻿using backend.Core.Entities;
 using backend.Core.Enums;
 using backend.DTOs;
+using backend.Infrastructure.Repositories;
 using backend.Infrastructure.Repositories.Contracts;
 using backend.Infrastructure.Services.Contracts;
 using backend.UnitOfWork.Contract;
@@ -11,10 +12,12 @@ namespace backend.Infrastructure.Services
     public class GroupService : IGroupService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<GroupService> _logger;
 
-        public GroupService(IUnitOfWork unitOfWork)
+        public GroupService(IUnitOfWork unitOfWork, ILogger<GroupService> logger)
         {
             _unitOfWork = unitOfWork;
+            _logger = logger;
         }
 
         public async Task<StudentDetailsDto?> GetStudentByEmailAsync(string email)
@@ -349,19 +352,52 @@ namespace backend.Infrastructure.Services
             };
         }
 
-        
+
 
         public async Task<StudentSupervisionStatusDto> GetStudentSupervisionStatusAsync(int studentId)
         {
-            var supervisionStatus = await _unitOfWork.Groups.IsStudentInSupervisedGroupAsync(studentId);
-
-            return new StudentSupervisionStatusDto
+            try
             {
-                IsInSupervisedGroup = supervisionStatus.InSupervisedGroup,
-                GroupName = supervisionStatus.GroupName,
-                SupervisorName = supervisionStatus.SupervisorName
-            };
+                _logger.LogInformation("Getting supervision status for student {StudentId}", studentId);
+
+                var supervisionStatus = await _unitOfWork.Groups.IsStudentInSupervisedGroupAsync(studentId);
+
+                _logger.LogInformation(
+                    "Supervision status result for student {StudentId}: InSupervisedGroup={InSupervisedGroup}, GroupName={GroupName}",
+                    studentId,
+                    supervisionStatus.InSupervisedGroup,
+                    supervisionStatus.GroupName);
+
+                return new StudentSupervisionStatusDto
+                {
+                    IsInSupervisedGroup = supervisionStatus.InSupervisedGroup,
+                    GroupName = supervisionStatus.GroupName,
+                    SupervisorName = supervisionStatus.SupervisorName
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting supervision status for student {StudentId}", studentId);
+                throw;
+            }
         }
+
+
+        public async Task<List<GroupDetailsDto>> GetGroupsWithSupervisorsAsync()
+        {
+            // Get all groups that have a supervisor (TeacherId is not null)
+            var groups = await _unitOfWork.Groups.GetGroupsWithSupervisorsAsync();
+            var result = new List<GroupDetailsDto>();
+
+            // Process each group and map to DTO
+            foreach (var group in groups)
+            {
+                result.Add(await MapGroupToDto(group));
+            }
+
+            return result;
+        }
+
 
     }
 }

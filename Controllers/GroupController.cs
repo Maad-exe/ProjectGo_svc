@@ -10,7 +10,7 @@ namespace backend.Controllers
 {
     [Route("api/groups")]
     [ApiController]
-    [Authorize(Policy = "StudentPolicy")]
+    [Authorize]
     public class GroupController : ControllerBase
     {
         private readonly IGroupService _groupService;
@@ -135,10 +135,7 @@ namespace backend.Controllers
             {
                 // Verify user is authorized to access this student's data
                 var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-                if (userIdClaim == null || int.Parse(userIdClaim) != studentId)
-                {
-                    return Forbid();
-                }
+                
 
                 // Get student details to verify existence
                 var student = await _groupService.GetStudentByIdAsync(studentId);
@@ -164,6 +161,22 @@ namespace backend.Controllers
             {
                 _logger.LogError(ex, "Error checking student supervision status");
                 return StatusCode(500, new { message = "An error occurred while checking student supervision status" });
+            }
+        }
+
+        [HttpGet("with-supervisors")]
+        public async Task<ActionResult<List<GroupDetailsDto>>> GetGroupsWithSupervisors()
+        {
+            try
+            {
+                _logger.LogInformation("Fetching all groups with supervisors");
+                var groups = await _groupService.GetGroupsWithSupervisorsAsync();
+                return Ok(groups);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching groups with supervisors");
+                return StatusCode(500, "An error occurred while fetching groups with supervisors");
             }
         }
 

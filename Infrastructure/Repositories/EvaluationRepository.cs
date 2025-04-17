@@ -148,7 +148,11 @@ namespace backend.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+<<<<<<< HEAD
+        
+=======
        
+>>>>>>> 86352b76b9edc7858e1fb394fad9a81fb5a19c32
 
         public async Task<bool> HasTeacherEvaluatedStudentAsync(int teacherId, int studentEvaluationId)
         {
@@ -231,6 +235,25 @@ namespace backend.Infrastructure.Repositories
         public async Task UpdateStudentEvaluationAsync(StudentEvaluation evaluation)
         {
             _context.StudentEvaluations.Update(evaluation);
+        }
+
+        public async Task<StudentEvaluation?> GetStudentEvaluationByIdAsync(int evaluationId)
+        {
+            return await _context.StudentEvaluations
+                .Include(se => se.Student)
+                .Include(se => se.GroupEvaluation)
+                    .ThenInclude(ge => ge.Event)
+                .FirstOrDefaultAsync(se => se.Id == evaluationId);
+        }
+
+        public async Task MarkEvaluationAsCompleteAsync(int evaluationId)
+        {
+            var evaluation = await _context.StudentEvaluations.FindAsync(evaluationId);
+            if (evaluation != null)
+            {
+                evaluation.IsComplete = true;
+                _context.StudentEvaluations.Update(evaluation);
+            }
         }
     }
 }

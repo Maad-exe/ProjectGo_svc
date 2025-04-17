@@ -10,69 +10,84 @@ namespace backend.Infrastructure.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
+        #region DbSet Properties
+        // User Management
         public DbSet<User> Users { get; set; }
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Teacher> Teachers { get; set; }
         public DbSet<Student> Students { get; set; }
+
+        // Group Management
         public DbSet<Group> Groups { get; set; }
         public DbSet<GroupMember> GroupMembers { get; set; }
-
         public DbSet<SupervisionRequest> SupervisionRequests { get; set; }
+
+        // Communication
         public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<MessageReadStatus> MessageReadStatuses { get; set; }
 
+        // Panel Management
         public DbSet<Panel> Panels { get; set; }
         public DbSet<PanelMember> PanelMembers { get; set; }
+
+        // Evaluation Management
         public DbSet<EvaluationEvent> EvaluationEvents { get; set; }
         public DbSet<GroupEvaluation> GroupEvaluations { get; set; }
         public DbSet<StudentEvaluation> StudentEvaluations { get; set; }
-
         public DbSet<EvaluationRubric> EvaluationRubrics { get; set; }
         public DbSet<RubricCategory> RubricCategories { get; set; }
         public DbSet<StudentCategoryScore> StudentCategoryScores { get; set; }
+        #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            var seedDateTime = new DateTime(2024, 3, 17, 12, 0, 0, DateTimeKind.Utc);
+
             base.OnModelCreating(modelBuilder);
 
+            #region Table Configurations
             modelBuilder.Entity<User>().ToTable("Users");
             modelBuilder.Entity<Admin>().ToTable("Admins");
             modelBuilder.Entity<Teacher>().ToTable("Teachers");
             modelBuilder.Entity<Student>().ToTable("Students");
             modelBuilder.Entity<Group>().ToTable("Groups");
             modelBuilder.Entity<GroupMember>().ToTable("GroupMembers");
-
-
-            // Configure relationships
-            modelBuilder.Entity<GroupMember>()
-                .HasOne(gm => gm.Group)
-                .WithMany(g => g.Members)
-                .HasForeignKey(gm => gm.GroupId);
-
-            modelBuilder.Entity<GroupMember>()
-                .HasOne(gm => gm.Student)
-                .WithMany()
-                .HasForeignKey(gm => gm.StudentId);
-
-
             modelBuilder.Entity<SupervisionRequest>().ToTable("SupervisionRequests");
-            modelBuilder.Entity<SupervisionRequest>()
-                .HasOne(sr => sr.Group)
-                .WithMany()
-                .HasForeignKey(sr => sr.GroupId)
-                .OnDelete(DeleteBehavior.Cascade);
+            #endregion
 
-            modelBuilder.Entity<Group>()
-                .HasOne(g => g.Teacher)
-                .WithMany()
-                .HasForeignKey(g => g.TeacherId)
-                .OnDelete(DeleteBehavior.SetNull);
+            #region Group Management Relationships
+            modelBuilder.Entity<GroupMember>(entity =>
+            {
+                entity.HasOne(gm => gm.Group)
+                    .WithMany(g => g.Members)
+                    .HasForeignKey(gm => gm.GroupId);
 
+                entity.HasOne(gm => gm.Student)
+                    .WithMany()
+                    .HasForeignKey(gm => gm.StudentId);
+            });
 
+            modelBuilder.Entity<SupervisionRequest>(entity =>
+            {
+                entity.HasOne(sr => sr.Group)
+                    .WithMany()
+                    .HasForeignKey(sr => sr.GroupId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Group>(entity =>
+            {
+                entity.HasOne(g => g.Teacher)
+                    .WithMany()
+                    .HasForeignKey(g => g.TeacherId)
+                    .OnDelete(DeleteBehavior.SetNull);
+            });
+            #endregion
+
+            #region Communication Configuration
             modelBuilder.Entity<ChatMessage>(entity =>
             {
                 entity.HasKey(e => e.Id);
-
                 entity.HasOne(e => e.Group)
                     .WithMany(g => g.Messages)
                     .HasForeignKey(e => e.GroupId)
@@ -84,11 +99,9 @@ namespace backend.Infrastructure.Data
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
-
             modelBuilder.Entity<MessageReadStatus>(entity =>
             {
                 entity.HasKey(e => e.Id);
-
                 entity.HasOne(e => e.Message)
                     .WithMany(m => m.ReadStatuses)
                     .HasForeignKey(e => e.MessageId)
@@ -101,40 +114,65 @@ namespace backend.Infrastructure.Data
 
                 entity.HasIndex(e => new { e.MessageId, e.UserId }).IsUnique();
             });
+            #endregion
 
-
-
-            // Configure unique constraint to prevent duplicate teacher assignments in a panel
+            #region Evaluation Configuration
             modelBuilder.Entity<PanelMember>()
                 .HasIndex(pm => new { pm.PanelId, pm.TeacherId })
                 .IsUnique();
 
-            // Configure the GroupEvaluation to ensure a group can only be evaluated 
-            // once by a panel for a specific event
             modelBuilder.Entity<GroupEvaluation>()
                 .HasIndex(ge => new { ge.GroupId, ge.EventId })
                 .IsUnique();
 
-            // Configure RubricCategory to ensure weights add up to 1.0 (100%)
-            modelBuilder.Entity<RubricCategory>()
-                .HasIndex(rc => rc.RubricId);
+            modelBuilder.Entity<StudentEvaluation>(entity =>
+            {
+                entity.HasOne(se => se.Rubric)
+                    .WithMany()
+                    .HasForeignKey(se => se.RubricId)
+                    .OnDelete(DeleteBehavior.Restrict);
 
+                entity.HasIndex(se => se.StudentId);
+                entity.HasIndex(se => se.GroupEvaluationId);
+            });
+
+            modelBuilder.Entity<RubricCategory>(entity =>
+            {
+                entity.HasIndex(rc => rc.RubricId);
+                entity.HasOne(rc => rc.Rubric)
+                    .WithMany(r => r.Categories)
+                    .HasForeignKey(rc => rc.RubricId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<StudentCategoryScore>(entity =>
+            {
+                entity.HasOne(scs => scs.Category)
+                    .WithMany()
+                    .HasForeignKey(scs => scs.CategoryId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(scs => new { scs.StudentEvaluationId, scs.CategoryId })
+                    .IsUnique();
+            });
+            #endregion
+
+            #region Seed Data
             modelBuilder.Entity<Admin>().HasData(new Admin
             {
                 Id = 1,
                 CreatedAt = new DateTime(2025, 2, 18, 12, 0, 0, DateTimeKind.Utc),
                 Email = "admin@projectgo.com",
                 FullName = "System Admin",
-                PasswordHash = "$2a$11$dGbHOWMrjr/9KPl9LxongumrriovDITJb6H42vb3s4RpHAYURKE4C", // Static hash for "adminpassword"
+                PasswordHash = "$2a$11$dGbHOWMrjr/9KPl9LxongumrriovDITJb6H42vb3s4RpHAYURKE4C",
                 Role = UserType.Admin,
                 IsSuperAdmin = true
             });
 
+             
+            #endregion
 
-
-
-
-            // Apply configurations
+            // Apply additional configurations
             modelBuilder.ApplyConfiguration(new UserConfiguration());
         }
     }

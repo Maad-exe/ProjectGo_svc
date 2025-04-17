@@ -107,7 +107,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("teachers")]
-        [Authorize(Policy = "StudentPolicy")]
+        //[Authorize(Policy = "StudentPolicy")]
         public async Task<IActionResult> GetAllTeachers()
         {
             // Log the current identity and claims before processing

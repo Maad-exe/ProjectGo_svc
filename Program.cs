@@ -39,8 +39,16 @@ builder.Services.AddCors(options =>
         policy.WithOrigins("http://localhost:4200")
               .AllowAnyMethod()
               .AllowAnyHeader()
-              .AllowCredentials();
+              .AllowCredentials().SetIsOriginAllowed(origin => true); // Be careful with this in production
     });
+});
+
+builder.Services.AddSignalR(hubOptions =>
+{
+    hubOptions.EnableDetailedErrors = true;
+    hubOptions.KeepAliveInterval = TimeSpan.FromSeconds(15);
+    hubOptions.ClientTimeoutInterval = TimeSpan.FromSeconds(30);
+    hubOptions.HandshakeTimeout = TimeSpan.FromSeconds(15);
 });
 
 // Configure Authentication
@@ -69,6 +77,20 @@ builder.Services.AddAuthentication(options =>
     // Add debug handlers
     options.Events = new JwtBearerEvents
     {
+
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+            var path = context.HttpContext.Request.Path;
+
+            if (!string.IsNullOrEmpty(accessToken) &&
+                path.StartsWithSegments("/api/chatHub"))
+            {
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        },
+
         OnAuthenticationFailed = context =>
         {
             Console.WriteLine($"Authentication failed: {context.Exception.Message}");
@@ -91,11 +113,7 @@ builder.Services.AddAuthentication(options =>
             }
             return Task.CompletedTask;
         },
-        OnMessageReceived = context =>
-        {
-            Console.WriteLine($"Token received: {context.Token?.Substring(0, 20)}...");
-            return Task.CompletedTask;
-        }
+       
     };
 });
 
@@ -136,6 +154,13 @@ builder.Services.AddScoped<IUserManagementService, UserManagementService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IPanelService, PanelService>();
 builder.Services.AddScoped<IEvaluationService, EvaluationService>();
+
+builder.Services.AddLogging(logging =>
+{
+    logging.ClearProviders();
+    logging.AddConsole();
+    logging.AddDebug();
+});
 
 // Add Controllers
 builder.Services.AddControllers();

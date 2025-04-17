@@ -6,16 +6,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/admin/rubrics")]
     public class AdminRubricController : ControllerBase
     {
         private readonly IEvaluationService _evaluationService;
+        private readonly ILogger<AdminRubricController> _logger;
 
-        public AdminRubricController(IEvaluationService evaluationService)
+        public AdminRubricController(IEvaluationService evaluationService, ILogger<AdminRubricController> logger)
         {
             _evaluationService = evaluationService;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -43,9 +45,18 @@ namespace backend.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<EvaluationRubricDto>>> GetAllRubrics()
+        public async Task<IActionResult> GetAllRubrics()
         {
-            return await _evaluationService.GetAllRubricsAsync();
+            try
+            {
+                var rubrics = await _evaluationService.GetAllRubricsAsync();
+                return Ok(rubrics);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error fetching all rubrics");
+                return StatusCode(500, new { message = "An error occurred while fetching rubrics" });
+            }
         }
 
         [HttpPut("{id}")]

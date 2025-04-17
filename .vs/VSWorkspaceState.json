@@ -2,8 +2,8 @@
   "ExpandedNodes": [
     "",
     "\\Infrastructure",
-    "\\Infrastructure\\Repositories"
+    "\\Infrastructure\\Services"
   ],
-  "SelectedNode": "\\Infrastructure\\Repositories\\ChatRepository.cs",
+  "SelectedNode": "\\Infrastructure\\Services\\EvaluationService.cs",
   "PreviewInSolutionExplorer": false
 }

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/admin/panels")]
     public class AdminPanelController : ControllerBase
@@ -68,6 +68,20 @@ namespace backend.Controllers
             {
                 await _panelService.DeletePanelAsync(id);
                 return NoContent();
+            }
+            catch (ApplicationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("byEvent/{eventId}")]
+        public async Task<ActionResult<List<PanelDto>>> GetPanelsByEventId(int eventId)
+        {
+            try
+            {
+                var panels = await _panelService.GetPanelsByEventIdAsync(eventId);
+                return Ok(panels);
             }
             catch (ApplicationException ex)
             {

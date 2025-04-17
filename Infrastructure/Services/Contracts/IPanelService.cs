@@ -11,5 +11,8 @@ namespace backend.Infrastructure.Services.Contracts
         Task DeletePanelAsync(int panelId);
         Task<List<PanelDto>> GetPanelsByTeacherIdAsync(int teacherId);
         Task<bool> CanTeacherEvaluateGroupAsync(int teacherId, int groupId);
-    }
+        Task<List<PanelDto>> GetPanelsByEventIdAsync(int eventId);
+    
+
+}
 }

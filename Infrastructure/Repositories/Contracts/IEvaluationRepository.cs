@@ -31,5 +31,7 @@ namespace backend.Infrastructure.Repositories.Contracts
         Task<double> CalculateFinalGradeAsync(int studentId);
         Task<List<StudentEvaluation>> GetAllStudentEvaluationsForNormalizationAsync();
         Task UpdateStudentEvaluationAsync(StudentEvaluation evaluation);
+        Task<StudentEvaluation?> GetStudentEvaluationByIdAsync(int evaluationId);
+        Task MarkEvaluationAsCompleteAsync(int evaluationId);
     }
 }
