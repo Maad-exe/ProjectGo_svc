@@ -60,46 +60,40 @@ namespace backend.Infrastructure.Services
             };
         }
 
-        // In your EvaluationService.cs
-        public async Task<List<StudentDto>> GetStudentsForGroupEvaluationAsync(int groupEvaluationId)
+
+        public async Task<List<StudentDto>> GetStudentsForGroupEvaluationAsync(int groupEvaluationId, int teacherId)
         {
-            try
+            var groupEvaluation = await _unitOfWork.Evaluations.GetGroupEvaluationByIdAsync(groupEvaluationId);
+            if (groupEvaluation == null)
+                throw new ApplicationException($"Group evaluation with ID {groupEvaluationId} not found");
+
+            var students = new List<StudentDto>();
+
+            foreach (var member in groupEvaluation.Group.Members)
             {
-                // Get the group evaluation with explicit loading of related entities
-                var groupEvaluation = await _unitOfWork.Evaluations.GetGroupEvaluationByIdAsync(groupEvaluationId);
-                if (groupEvaluation == null)
-                    throw new ApplicationException($"Group evaluation with ID {groupEvaluationId} not found");
+                var student = member.Student;
+                var studentEvaluation = groupEvaluation.StudentEvaluations
+                    .FirstOrDefault(se => se.StudentId == student.Id);
 
-                // Get all students in the group
-                var students = new List<StudentDto>();
-
-                foreach (var member in groupEvaluation.Group.Members)
+                // Check if this specific teacher has evaluated the student
+                bool isEvaluated = false;
+                if (studentEvaluation != null)
                 {
-                    var student = member.Student;
-
-                    // Check if the student has already been evaluated
-                    bool isEvaluated = groupEvaluation.StudentEvaluations
-                        .Any(se => se.StudentId == student.Id);
-
-                    students.Add(new StudentDto
-                    {
-                        Id = student.Id,
-                        FullName = student.FullName,
-                        Email = student.Email,
-                        EnrollmentNumber = student.EnrollmentNumber,
-                        Department = student.Department, // This is correct, Department is a string
-                        IsEvaluated = isEvaluated
-                    });
+                    isEvaluated = await _unitOfWork.Evaluations.HasTeacherEvaluatedStudentAsync(teacherId, studentEvaluation.Id);
                 }
 
-                return students;
+                students.Add(new StudentDto
+                {
+                    Id = student.Id,
+                    FullName = student.FullName,
+                    Email = student.Email,
+                    EnrollmentNumber = student.EnrollmentNumber,
+                    Department = student.Department,
+                    IsEvaluated = isEvaluated
+                });
             }
-            catch (Exception ex)
-            {
-                // Log the exception
-                Console.WriteLine($"Error in GetStudentsForGroupEvaluationAsync: {ex.Message}");
-                throw;
-            }
+
+            return students;
         }
         public async Task<EvaluationEventDto?> GetEventByIdAsync(int eventId)
         {
@@ -1261,6 +1255,24 @@ namespace backend.Infrastructure.Services
             await _unitOfWork.SaveChangesAsync();
             return true;
         }
+
+        private async Task UpdateFinalMarks(StudentEvaluation evaluation)
+        {
+            var evaluationEvent = await _unitOfWork.Evaluations.GetEventByIdAsync(evaluation.GroupEvaluation.EventId);
+            var allScores = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAsync(evaluation.Id);
+
+            if (evaluationEvent.RubricId.HasValue)
+            {
+                // For rubric-based evaluation
+                await CalculateObtainedMarksFromCategoryScores(evaluation.Id, evaluationEvent);
+            }
+            else
+            {
+                // For simple evaluation
+                evaluation.ObtainedMarks = (int)Math.Round(allScores.Average(s => s.Score));
+            }
+        }
+
     }
 }
 
