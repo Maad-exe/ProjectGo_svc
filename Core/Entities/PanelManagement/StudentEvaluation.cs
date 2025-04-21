@@ -25,6 +25,8 @@ public class StudentEvaluation
     // For multiple evaluators and rubric-based evaluation
     public int? RubricId { get; set; }
     public EvaluationRubric? Rubric { get; set; }
+    public int RequiredEvaluatorsCount { get; set; } // Add this property
+
 
     // Collection of category scores from different evaluators
     public ICollection<StudentCategoryScore> CategoryScores { get; set; } = new List<StudentCategoryScore>();

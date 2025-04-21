@@ -6623,11 +6623,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\ProjectGo\\Backend\\ProjectGo_svc\\backend.csproj",
+      "projectUniqueName": "F:\\Zeki\\ProjectGo_svc\\backend.csproj",
       "projectName": "backend",
-      "projectPath": "F:\\ProjectGo\\Backend\\ProjectGo_svc\\backend.csproj",
+      "projectPath": "F:\\Zeki\\ProjectGo_svc\\backend.csproj",
       "packagesPath": "C:\\Users\\hamma\\.nuget\\packages\\",
-      "outputPath": "F:\\ProjectGo\\Backend\\ProjectGo_svc\\obj\\",
+      "outputPath": "F:\\Zeki\\ProjectGo_svc\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

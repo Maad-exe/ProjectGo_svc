@@ -127,6 +127,7 @@ namespace backend.Infrastructure.Data
 
             modelBuilder.Entity<StudentEvaluation>(entity =>
             {
+                // Existing configurations
                 entity.HasOne(se => se.Rubric)
                     .WithMany()
                     .HasForeignKey(se => se.RubricId)
@@ -134,6 +135,10 @@ namespace backend.Infrastructure.Data
 
                 entity.HasIndex(se => se.StudentId);
                 entity.HasIndex(se => se.GroupEvaluationId);
+
+                // Add this new configuration
+                entity.Property(se => se.RequiredEvaluatorsCount)
+                    .HasDefaultValue(0);
             });
 
             modelBuilder.Entity<RubricCategory>(entity =>

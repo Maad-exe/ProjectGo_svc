@@ -148,11 +148,6 @@ namespace backend.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-<<<<<<< HEAD
-        
-=======
-       
->>>>>>> 86352b76b9edc7858e1fb394fad9a81fb5a19c32
 
         public async Task<bool> HasTeacherEvaluatedStudentAsync(int teacherId, int studentEvaluationId)
         {
@@ -176,6 +171,9 @@ namespace backend.Infrastructure.Repositories
         {
             var studentEvaluation = await _context.StudentEvaluations
                 .Include(se => se.Evaluators)
+                .Include(se => se.GroupEvaluation)
+                    .ThenInclude(ge => ge.Panel)
+                        .ThenInclude(p => p.Members)
                 .FirstOrDefaultAsync(se => se.Id == studentEvaluationId);
 
             if (studentEvaluation != null)
@@ -183,11 +181,62 @@ namespace backend.Infrastructure.Repositories
                 var teacher = await _context.Teachers.FindAsync(teacherId);
                 if (teacher != null && !studentEvaluation.Evaluators.Any(t => t.Id == teacherId))
                 {
+                    // Add the evaluator
                     studentEvaluation.Evaluators.Add(teacher);
+
+                    // Set required evaluators count if not set
+                    if (studentEvaluation.RequiredEvaluatorsCount == 0)
+                    {
+                        studentEvaluation.RequiredEvaluatorsCount =
+                            studentEvaluation.GroupEvaluation.Panel.Members.Count;
+                    }
+
+                    // Update completion status based on actual count
+                    studentEvaluation.IsComplete =
+                        studentEvaluation.Evaluators.Count >= studentEvaluation.RequiredEvaluatorsCount;
+
+                    await _context.SaveChangesAsync();
                 }
             }
         }
 
+
+
+        public async Task<bool> CheckEvaluationCompletionAsync(int studentEvaluationId)
+        {
+            var evaluation = await _context.StudentEvaluations
+                .Include(se => se.Evaluators)
+                .Include(se => se.GroupEvaluation)
+                    .ThenInclude(ge => ge.Panel)
+                        .ThenInclude(p => p.Members)
+                .FirstOrDefaultAsync(se => se.Id == studentEvaluationId);
+
+            if (evaluation == null) return false;
+
+            int requiredCount = evaluation.GroupEvaluation.Panel.Members.Count;
+            int currentCount = evaluation.Evaluators.Count;
+
+            return currentCount >= requiredCount;
+        }
+
+        public async Task MarkEvaluationAsCompleteAsync(int evaluationId)
+        {
+            var evaluation = await _context.StudentEvaluations
+                .Include(se => se.Evaluators)
+                .Include(se => se.GroupEvaluation)
+                    .ThenInclude(ge => ge.Panel)
+                        .ThenInclude(p => p.Members)
+                .FirstOrDefaultAsync(se => se.Id == evaluationId);
+
+            if (evaluation != null)
+            {
+                // Only mark complete if all required evaluators have evaluated
+                bool isComplete = await CheckEvaluationCompletionAsync(evaluationId);
+                evaluation.IsComplete = isComplete;
+                _context.StudentEvaluations.Update(evaluation);
+                await _context.SaveChangesAsync();
+            }
+        }
         public async Task<double> CalculateFinalGradeAsync(int studentId)
         {
             // Get all student evaluations grouped by event
@@ -246,14 +295,6 @@ namespace backend.Infrastructure.Repositories
                 .FirstOrDefaultAsync(se => se.Id == evaluationId);
         }
 
-        public async Task MarkEvaluationAsCompleteAsync(int evaluationId)
-        {
-            var evaluation = await _context.StudentEvaluations.FindAsync(evaluationId);
-            if (evaluation != null)
-            {
-                evaluation.IsComplete = true;
-                _context.StudentEvaluations.Update(evaluation);
-            }
-        }
+      
     }
 }
