@@ -189,8 +189,8 @@ namespace backend.Controllers
                 if (!panelIds.Contains(evaluation.PanelId))
                     return Forbid("You are not a member of the panel for this evaluation");
 
-                // Get students from the group
-                var students = await _evaluationService.GetStudentsForGroupEvaluationAsync(id);
+                // Get students from the group - Pass both groupEvaluationId and teacherId
+                var students = await _evaluationService.GetStudentsForGroupEvaluationAsync(id, userId);
                 return Ok(students);
             }
             catch (ApplicationException ex)
@@ -198,6 +198,7 @@ namespace backend.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
         [HttpGet("event-evaluation-type/{id}")]
         public async Task<ActionResult<EventEvaluationTypeDto>> GetEventEvaluationType(int id)
         {
