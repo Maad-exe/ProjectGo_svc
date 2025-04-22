@@ -940,7 +940,7 @@ namespace backend.Infrastructure.Services
             await _unitOfWork.SaveChangesAsync();
 
             // Return enhanced DTO with category scores
-            return await MapToEnhancedStudentEvaluationDto(studentEvaluation);
+            return await MapToEnhancedStudentEvaluationDtoAsync(studentEvaluation);
         }
 
         // New helper method to compile feedback from all evaluators
@@ -1028,7 +1028,7 @@ namespace backend.Infrastructure.Services
             await _unitOfWork.SaveChangesAsync(); // Add this line to ensure changes are saved
         }
 
-        private async Task<EnhancedStudentEvaluationDto> MapToEnhancedStudentEvaluationDto(StudentEvaluation evaluation)
+        public async Task<EnhancedStudentEvaluationDto> MapToEnhancedStudentEvaluationDtoAsync(StudentEvaluation evaluation)
         {
             var student = await _unitOfWork.Students.GetStudentByIdAsync(evaluation.StudentId);
             var groupEvaluation = await _unitOfWork.Evaluations.GetGroupEvaluationByIdAsync(evaluation.GroupEvaluationId);

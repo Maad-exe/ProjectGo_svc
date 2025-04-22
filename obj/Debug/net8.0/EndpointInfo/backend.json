@@ -1411,6 +1411,44 @@
         }
       }
     },
+    "/api/student/evaluations/enhanced-progress": {
+      "get": {
+        "tags": [
+          "StudentEvaluation"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EnhancedStudentEvaluationDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EnhancedStudentEvaluationDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EnhancedStudentEvaluationDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/teachers": {
       "get": {
         "tags": [

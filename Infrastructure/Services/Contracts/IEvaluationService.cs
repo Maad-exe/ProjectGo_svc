@@ -26,7 +26,8 @@ public interface IEvaluationService
     Task<List<StudentEvaluationDto>> GetStudentProgressByStudentIdAsync(int studentId);
     // Add this to IEvaluationService.cs
     Task<List<StudentDto>> GetStudentsForGroupEvaluationAsync(int groupEvaluationId, int teacherId);
-
+    // Add to interface
+    Task<EnhancedStudentEvaluationDto> MapToEnhancedStudentEvaluationDtoAsync(StudentEvaluation evaluation);
 
     // Dashboard & Performance
     Task<List<GroupPerformanceDto>> GetSupervisedGroupsPerformanceAsync(int teacherId);

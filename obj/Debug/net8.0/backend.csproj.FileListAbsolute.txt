@@ -753,9 +753,6 @@ F:\ProjectGo_FinalVer\ProjectGo_svc\obj\Debug\net8.0\backend.csproj.CoreCompileI
 F:\ProjectGo_FinalVer\ProjectGo_svc\obj\Debug\net8.0\backend.MvcApplicationPartsAssemblyInfo.cs
 F:\ProjectGo_FinalVer\ProjectGo_svc\obj\Debug\net8.0\backend.MvcApplicationPartsAssemblyInfo.cache
 F:\ProjectGo_FinalVer\ProjectGo_svc\obj\Debug\net8.0\backend.sourcelink.json
-F:\ProjectGo_FinalVer\ProjectGo_svc\obj\Debug\net8.0\backend.dll
-F:\ProjectGo_FinalVer\ProjectGo_svc\obj\Debug\net8.0\refint\backend.dll
-F:\ProjectGo_FinalVer\ProjectGo_svc\obj\Debug\net8.0\backend.pdb
 F:\ProjectGo_FinalVer\ProjectGo_svc\bin\Debug\net8.0\appsettings.Development.json
 F:\ProjectGo_FinalVer\ProjectGo_svc\bin\Debug\net8.0\appsettings.json
 F:\ProjectGo_FinalVer\ProjectGo_svc\bin\Debug\net8.0\backend.staticwebassets.endpoints.json
@@ -931,5 +928,8 @@ F:\ProjectGo_FinalVer\ProjectGo_svc\obj\Debug\net8.0\staticwebassets\msbuild.bui
 F:\ProjectGo_FinalVer\ProjectGo_svc\obj\Debug\net8.0\staticwebassets.pack.json
 F:\ProjectGo_FinalVer\ProjectGo_svc\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 F:\ProjectGo_FinalVer\ProjectGo_svc\obj\Debug\net8.0\backend.csproj.Up2Date
+F:\ProjectGo_FinalVer\ProjectGo_svc\obj\Debug\net8.0\backend.dll
+F:\ProjectGo_FinalVer\ProjectGo_svc\obj\Debug\net8.0\refint\backend.dll
+F:\ProjectGo_FinalVer\ProjectGo_svc\obj\Debug\net8.0\backend.pdb
 F:\ProjectGo_FinalVer\ProjectGo_svc\obj\Debug\net8.0\backend.genruntimeconfig.cache
 F:\ProjectGo_FinalVer\ProjectGo_svc\obj\Debug\net8.0\ref\backend.dll
