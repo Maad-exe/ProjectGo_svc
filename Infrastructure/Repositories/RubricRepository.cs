@@ -17,7 +17,7 @@ namespace backend.Infrastructure.Repositories
 
         public async Task<EvaluationRubric> CreateRubricAsync(EvaluationRubric rubric)
         {
-            _context.EvaluationRubrics.Add(rubric);
+            await _context.EvaluationRubrics.AddAsync(rubric);
             return rubric;
         }
 
@@ -44,6 +44,7 @@ namespace backend.Infrastructure.Repositories
         public async Task UpdateRubricAsync(EvaluationRubric rubric)
         {
             _context.EvaluationRubrics.Update(rubric);
+            await Task.CompletedTask; // To satisfy the async contract
         }
 
         public async Task DeleteRubricAsync(int rubricId)
@@ -63,7 +64,7 @@ namespace backend.Infrastructure.Repositories
 
         public async Task<StudentCategoryScore> AddCategoryScoreAsync(StudentCategoryScore score)
         {
-            _context.StudentCategoryScores.Add(score);
+            await _context.StudentCategoryScores.AddAsync(score);
             return score;
         }
 
@@ -81,6 +82,23 @@ namespace backend.Infrastructure.Repositories
                 .Where(s => s.CategoryId == categoryId)
                 .Include(s => s.StudentEvaluation)
                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<StudentCategoryScore>> GetScoresByStudentEvaluationIdAndEvaluatorIdAsync(int studentEvaluationId, int evaluatorId)
+        {
+            return await _context.StudentCategoryScores
+                .Where(s => s.StudentEvaluationId == studentEvaluationId && s.EvaluatorId == evaluatorId)
+                .Include(s => s.Category)
+                .ToListAsync();
+        }
+
+        public async Task<int> GetUniqueEvaluatorsCountForStudentEvaluationAsync(int studentEvaluationId)
+        {
+            return await _context.StudentCategoryScores
+                .Where(s => s.StudentEvaluationId == studentEvaluationId)
+                .Select(s => s.EvaluatorId)
+                .Distinct()
+                .CountAsync();
         }
     }
 }

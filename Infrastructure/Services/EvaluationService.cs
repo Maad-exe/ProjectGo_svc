@@ -22,9 +22,6 @@ namespace backend.Infrastructure.Services
             _unitOfWork = unitOfWork;
         }
 
-        // Infrastructure/Services/EvaluationService.cs
-        // Update the relevant methods to handle event type
-
         public async Task<EvaluationEventDto> CreateEventAsync(CreateEventDto eventDto)
         {
             var evaluationEvent = new EvaluationEvent
@@ -33,7 +30,7 @@ namespace backend.Infrastructure.Services
                 Description = eventDto.Description,
                 Date = eventDto.Date,
                 TotalMarks = eventDto.TotalMarks,
-                Type = eventDto.Type,  // Added this line
+                Type = eventDto.Type,
                 Weight = eventDto.Weight,
                 RubricId = eventDto.RubricId,
                 IsActive = true,
@@ -52,14 +49,12 @@ namespace backend.Infrastructure.Services
                 TotalMarks = createdEvent.TotalMarks,
                 IsActive = createdEvent.IsActive,
                 CreatedAt = createdEvent.CreatedAt,
-                Type = createdEvent.Type,  // Added this line
+                Type = createdEvent.Type,
                 Weight = createdEvent.Weight,
                 RubricId = createdEvent.RubricId,
-
                 RubricName = createdEvent.Rubric?.Name
             };
         }
-
 
         public async Task<List<StudentDto>> GetStudentsForGroupEvaluationAsync(int groupEvaluationId, int teacherId)
         {
@@ -75,7 +70,6 @@ namespace backend.Infrastructure.Services
                 var studentEvaluation = groupEvaluation.StudentEvaluations
                     .FirstOrDefault(se => se.StudentId == student.Id);
 
-                // Check if this specific teacher has evaluated the student
                 bool isEvaluated = false;
                 if (studentEvaluation != null)
                 {
@@ -95,6 +89,7 @@ namespace backend.Infrastructure.Services
 
             return students;
         }
+
         public async Task<EvaluationEventDto?> GetEventByIdAsync(int eventId)
         {
             var evaluationEvent = await _unitOfWork.Evaluations.GetEventByIdAsync(eventId);
@@ -110,7 +105,7 @@ namespace backend.Infrastructure.Services
                 TotalMarks = evaluationEvent.TotalMarks,
                 IsActive = evaluationEvent.IsActive,
                 CreatedAt = evaluationEvent.CreatedAt,
-                Type = evaluationEvent.Type,  // Added this line
+                Type = evaluationEvent.Type,
                 Weight = evaluationEvent.Weight,
                 RubricId = evaluationEvent.RubricId,
                 RubricName = evaluationEvent.Rubric?.Name
@@ -129,7 +124,7 @@ namespace backend.Infrastructure.Services
                 TotalMarks = e.TotalMarks,
                 IsActive = e.IsActive,
                 CreatedAt = e.CreatedAt,
-                Type = e.Type,  // Added this line
+                Type = e.Type,
                 Weight = e.Weight,
                 RubricId = e.RubricId,
                 RubricName = e.Rubric?.Name
@@ -147,7 +142,7 @@ namespace backend.Infrastructure.Services
             evaluationEvent.Date = eventDto.Date;
             evaluationEvent.TotalMarks = eventDto.TotalMarks;
             evaluationEvent.IsActive = eventDto.IsActive;
-            evaluationEvent.Type = eventDto.Type;  // Added this line
+            evaluationEvent.Type = eventDto.Type;
             evaluationEvent.Weight = eventDto.Weight;
             evaluationEvent.RubricId = eventDto.RubricId;
 
@@ -163,7 +158,7 @@ namespace backend.Infrastructure.Services
                 TotalMarks = evaluationEvent.TotalMarks,
                 IsActive = evaluationEvent.IsActive,
                 CreatedAt = evaluationEvent.CreatedAt,
-                Type = evaluationEvent.Type,  // Added this line
+                Type = evaluationEvent.Type,
                 Weight = evaluationEvent.Weight,
                 RubricId = evaluationEvent.RubricId,
                 RubricName = evaluationEvent.Rubric?.Name
@@ -178,37 +173,30 @@ namespace backend.Infrastructure.Services
 
         public async Task<GroupEvaluationDto> AssignPanelToGroupAsync(AssignPanelDto assignDto)
         {
-            // Check if panel exists
             var panel = await _unitOfWork.Panels.GetPanelByIdAsync(assignDto.PanelId);
             if (panel == null)
                 throw new ApplicationException($"Panel with ID {assignDto.PanelId} not found");
 
-            // Check if group exists
             var group = await _unitOfWork.Groups.GetGroupByIdAsync(assignDto.GroupId);
             if (group == null)
                 throw new ApplicationException($"Group with ID {assignDto.GroupId} not found");
 
-            // Check if event exists
             var evaluationEvent = await _unitOfWork.Evaluations.GetEventByIdAsync(assignDto.EventId);
             if (evaluationEvent == null)
                 throw new ApplicationException($"Event with ID {assignDto.EventId} not found");
 
-            // Check if the group has a supervisor
             if (!group.TeacherId.HasValue)
                 throw new ApplicationException("Cannot assign panel to a group without a supervisor");
 
-            // Validate that supervisor is not in the panel (key business rule)
             var supervisorId = group.TeacherId.Value;
             var supervisorInPanel = await _unitOfWork.Panels.IsTeacherInPanelAsync(assignDto.PanelId, supervisorId);
             if (supervisorInPanel)
                 throw new ApplicationException("Cannot assign a panel that includes the group's supervisor");
 
-            // Check if the group is already evaluated for this event
             var existingEvaluation = await _unitOfWork.Evaluations.GetGroupEvaluationsByGroupIdAsync(assignDto.GroupId);
             if (existingEvaluation.Any(ge => ge.EventId == assignDto.EventId))
                 throw new ApplicationException($"Group is already assigned for evaluation for this event");
 
-            // Create the group evaluation
             var groupEvaluation = new GroupEvaluation
             {
                 GroupId = assignDto.GroupId,
@@ -222,7 +210,6 @@ namespace backend.Infrastructure.Services
             var createdEvaluation = await _unitOfWork.Evaluations.AssignPanelToGroupAsync(groupEvaluation);
             await _unitOfWork.SaveChangesAsync();
 
-            // Return the DTO with details
             return await MapGroupEvaluationToDto(createdEvaluation);
         }
 
@@ -263,7 +250,6 @@ namespace backend.Infrastructure.Services
 
         public async Task<List<GroupEvaluationDto>> GetGroupEvaluationsByTeacherIdAsync(int teacherId)
         {
-            // Get all panels that the teacher is a part of
             var panels = await _unitOfWork.Panels.GetPanelsByTeacherIdAsync(teacherId);
 
             if (!panels.Any())
@@ -271,7 +257,6 @@ namespace backend.Infrastructure.Services
 
             var result = new List<GroupEvaluationDto>();
 
-            // For each panel, get its evaluations
             foreach (var panel in panels)
             {
                 var evaluations = await _unitOfWork.Evaluations.GetGroupEvaluationsByPanelIdAsync(panel.Id);
@@ -287,12 +272,10 @@ namespace backend.Infrastructure.Services
 
         public async Task<StudentEvaluationDto> EvaluateStudentAsync(EvaluateStudentDto evaluationDto)
         {
-            // Check if group evaluation exists
             var groupEvaluation = await _unitOfWork.Evaluations.GetGroupEvaluationByIdAsync(evaluationDto.GroupEvaluationId);
             if (groupEvaluation == null)
                 throw new ApplicationException($"Group evaluation with ID {evaluationDto.GroupEvaluationId} not found");
 
-            // Check if student exists and is part of the group
             var student = await _unitOfWork.Students.GetStudentByIdAsync(evaluationDto.StudentId);
             if (student == null)
                 throw new ApplicationException($"Student with ID {evaluationDto.StudentId} not found");
@@ -301,36 +284,31 @@ namespace backend.Infrastructure.Services
             if (!studentInGroup)
                 throw new ApplicationException("Student is not a member of the group being evaluated");
 
-            // Validate marks
             if (evaluationDto.ObtainedMarks < 0 || evaluationDto.ObtainedMarks > groupEvaluation.Event.TotalMarks)
                 throw new ApplicationException($"Marks must be between 0 and {groupEvaluation.Event.TotalMarks}");
 
-            // Check if student has already been evaluated
             var existingEvaluation = groupEvaluation.StudentEvaluations
                 .FirstOrDefault(se => se.StudentId == evaluationDto.StudentId);
 
             if (existingEvaluation != null)
                 throw new ApplicationException("Student has already been evaluated for this event");
 
-            // Create the student evaluation
             var studentEvaluation = new StudentEvaluation
             {
                 GroupEvaluationId = evaluationDto.GroupEvaluationId,
                 StudentId = evaluationDto.StudentId,
                 ObtainedMarks = evaluationDto.ObtainedMarks ?? 0,
-                Feedback = evaluationDto.Feedback,
+                Feedback = evaluationDto.Feedback ?? string.Empty,
                 EvaluatedAt = DateTime.Now
             };
 
             var createdEvaluation = await _unitOfWork.Evaluations.EvaluateStudentAsync(studentEvaluation);
 
-            // Check if all students in the group have been evaluated
             var groupMembers = groupEvaluation.Group.Members.Count();
-            var evaluatedStudents = groupEvaluation.StudentEvaluations.Count() + 1; // +1 for the one we just added
+            var evaluatedStudents = groupEvaluation.StudentEvaluations.Count() + 1;
 
             if (groupMembers == evaluatedStudents)
             {
-                // Mark the group evaluation as completed
                 groupEvaluation.IsCompleted = true;
                 await _unitOfWork.SaveChangesAsync();
             }
@@ -373,11 +351,10 @@ namespace backend.Infrastructure.Services
             {
                 Id = e.Id,
                 StudentId = e.StudentId,
-                StudentName = string.Empty, // Student name is not needed as we already know the student
+                StudentName = string.Empty,
                 ObtainedMarks = e.ObtainedMarks,
                 Feedback = e.Feedback,
                 EvaluatedAt = e.EvaluatedAt,
-                // Additional info about the evaluation
                 EventName = e.GroupEvaluation.Event.Name,
                 EventDate = e.GroupEvaluation.Event.Date,
                 TotalMarks = e.GroupEvaluation.Event.TotalMarks,
@@ -419,7 +396,6 @@ namespace backend.Infrastructure.Services
 
         public async Task<List<GroupPerformanceDto>> GetSupervisedGroupsPerformanceAsync(int teacherId)
         {
-            // Get groups supervised by this teacher
             var supervisedGroups = await _unitOfWork.Groups.GetGroupsByTeacherIdAsync(teacherId);
 
             if (!supervisedGroups.Any())
@@ -429,10 +405,8 @@ namespace backend.Infrastructure.Services
 
             foreach (var group in supervisedGroups)
             {
-                // Get all evaluations for this group
                 var evaluations = await _unitOfWork.Evaluations.GetGroupEvaluationsByGroupIdAsync(group.Id);
 
-                // Calculate performance metrics for this group
                 var groupPerformance = new GroupPerformanceDto
                 {
                     GroupId = group.Id,
@@ -448,18 +422,17 @@ namespace backend.Infrastructure.Services
                 foreach (var evaluation in evaluations)
                 {
                     var evaluationEvent = await _unitOfWork.Evaluations.GetEventByIdAsync(evaluation.EventId);
+                    if (evaluationEvent == null) continue;
+
                     var studentEvaluations = await _unitOfWork.Evaluations.GetStudentEvaluationsByGroupEvaluationIdAsync(evaluation.Id);
 
-                    // Skip if no evaluations yet
                     if (!studentEvaluations.Any())
                         continue;
 
-                    // Calculate average score
                     var totalMarks = studentEvaluations.Sum(se => se.ObtainedMarks);
                     var averageMarks = totalMarks / (double)studentEvaluations.Count;
                     var percentage = (averageMarks * 100) / evaluationEvent.TotalMarks;
 
-                    // Add to total for group average calculation
                     totalPercentage += percentage;
                     evaluationCount++;
 
@@ -475,14 +448,15 @@ namespace backend.Infrastructure.Services
                         StudentPerformances = new List<StudentPerformanceDto>()
                     };
 
-                    // Add individual student performances
                     foreach (var se in studentEvaluations)
                     {
                         var student = await _unitOfWork.Students.GetStudentByIdAsync(se.StudentId);
+                        if (student == null) continue;
+
                         eventPerformance.StudentPerformances.Add(new StudentPerformanceDto
                         {
                             StudentId = se.StudentId,
-                            StudentName = student?.FullName ?? "Unknown",
+                            StudentName = student.FullName,
                             ObtainedMarks = se.ObtainedMarks,
                             Percentage = (se.ObtainedMarks * 100.0) / evaluationEvent.TotalMarks,
                             Feedback = se.Feedback
@@ -491,7 +465,6 @@ namespace backend.Infrastructure.Services
                     groupPerformance.Events.Add(eventPerformance);
                 }
 
-                // Calculate overall average performance for the group
                 groupPerformance.AveragePerformance = evaluationCount > 0 ? totalPercentage / evaluationCount : 0;
 
                 result.Add(groupPerformance);
@@ -502,13 +475,10 @@ namespace backend.Infrastructure.Services
 
         public async Task<TeacherDashboardDto> GetTeacherDashboardAsync(int teacherId)
         {
-            // Get supervised groups count
             var supervisedGroups = await _unitOfWork.Groups.GetGroupsByTeacherIdAsync(teacherId);
 
-            // Get panel memberships count
             var panels = await _unitOfWork.Panels.GetPanelsByTeacherIdAsync(teacherId);
 
-            // Get total evaluations count for panels the teacher is part of
             int totalEvaluationsCount = 0;
             foreach (var panel in panels)
             {
@@ -516,7 +486,6 @@ namespace backend.Infrastructure.Services
                 totalEvaluationsCount += evaluations.Count;
             }
 
-            // Get detailed performance for supervised groups
             var supervisedGroupsPerformance = await GetSupervisedGroupsPerformanceAsync(teacherId);
 
             return new TeacherDashboardDto
@@ -546,12 +515,10 @@ namespace backend.Infrastructure.Services
             if (existingEvaluation == null)
                 throw new ApplicationException($"Group evaluation with ID {groupEvaluationId} not found");
 
-            // Update properties
             existingEvaluation.ScheduledDate = updatedEvaluation.ScheduledDate;
             existingEvaluation.IsCompleted = updatedEvaluation.IsCompleted;
             existingEvaluation.Comments = updatedEvaluation.Comments;
 
-            // Save changes
             await _unitOfWork.SaveChangesAsync();
 
             return await MapGroupEvaluationToDto(existingEvaluation);
@@ -559,13 +526,11 @@ namespace backend.Infrastructure.Services
 
         public async Task<AdminDashboardDto> GetAdminDashboardAsync()
         {
-            // Get counts of various entities
             var panels = await _unitOfWork.Panels.GetAllPanelsAsync();
             var events = await _unitOfWork.Evaluations.GetAllEventsAsync();
             var allGroups = await _unitOfWork.Groups.GetAllGroupsAsync();
             var supervisedGroups = allGroups.Where(g => g.TeacherId.HasValue).ToList();
 
-            // Get all evaluations
             var allEvaluations = new List<GroupEvaluation>();
             foreach (var e in events)
             {
@@ -573,7 +538,6 @@ namespace backend.Infrastructure.Services
                 allEvaluations.AddRange(evaluations);
             }
 
-            // Get event statistics
             var eventStats = new List<EventStatisticsDto>();
             foreach (var evt in events)
             {
@@ -585,13 +549,13 @@ namespace backend.Infrastructure.Services
                 foreach (var eval in evaluations)
                 {
                     var studentEvaluations = await _unitOfWork.Evaluations.GetStudentEvaluationsByGroupEvaluationIdAsync(eval.Id);
-                    if (studentEvaluations.Any())
-                    {
-                        double groupAvg = studentEvaluations.Average(se =>
-                            (se.ObtainedMarks * 100.0) / evt.TotalMarks);
-                        averagePerformance += groupAvg;
-                        evaluatedGroupsCount++;
-                    }
+                    if (studentEvaluations == null || !studentEvaluations.Any())
+                        continue;
+
+                    double groupAvg = studentEvaluations.Average(se =>
+                        (se.ObtainedMarks * 100.0) / evt.TotalMarks);
+                    averagePerformance += groupAvg;
+                    evaluatedGroupsCount++;
                 }
 
                 if (evaluatedGroupsCount > 0)
@@ -622,13 +586,10 @@ namespace backend.Infrastructure.Services
             };
         }
 
-
-
         public async Task<EvaluationRubricDto> CreateRubricAsync(CreateRubricDto rubricDto)
         {
-            // Validate weights add up to 1.0 (100%)
             double totalWeight = rubricDto.Categories.Sum(c => c.Weight);
-            if (Math.Abs(totalWeight - 1.0) > 0.01) // Allow small rounding errors
+            if (Math.Abs(totalWeight - 1.0) > 0.01)
             {
                 throw new ApplicationException("Category weights must sum to 1.0 (100%)");
             }
@@ -682,7 +643,6 @@ namespace backend.Infrastructure.Services
             if (rubric == null)
                 throw new ApplicationException($"Rubric with ID {rubricId} not found");
 
-            // Validate weights
             double totalWeight = rubricDto.Categories.Sum(c => c.Weight);
             if (Math.Abs(totalWeight - 1.0) > 0.01)
             {
@@ -693,14 +653,12 @@ namespace backend.Infrastructure.Services
             rubric.Description = rubricDto.Description;
             rubric.IsActive = rubricDto.IsActive;
 
-            // Update existing categories and add new ones
             foreach (var categoryDto in rubricDto.Categories)
             {
                 var category = rubric.Categories.FirstOrDefault(c => c.Id == categoryDto.Id);
 
                 if (category != null)
                 {
-                    // Update existing category
                     category.Name = categoryDto.Name;
                     category.Description = categoryDto.Description;
                     category.Weight = categoryDto.Weight;
@@ -708,7 +666,6 @@ namespace backend.Infrastructure.Services
                 }
                 else
                 {
-                    // Add new category
                     rubric.Categories.Add(new RubricCategory
                     {
                         RubricId = rubric.Id,
@@ -720,7 +677,6 @@ namespace backend.Infrastructure.Services
                 }
             }
 
-            // Remove categories that are not in the update DTO
             var categoryIdsToKeep = rubricDto.Categories.Select(c => c.Id).ToList();
             var categoriesToRemove = rubric.Categories
                 .Where(c => c.Id > 0 && !categoryIdsToKeep.Contains(c.Id))
@@ -739,7 +695,6 @@ namespace backend.Infrastructure.Services
 
         public async Task DeleteRubricAsync(int rubricId)
         {
-            // Check if rubric is used in any events
             var events = await _unitOfWork.Evaluations.GetAllEventsAsync();
             var isRubricInUse = events.Any(e => e.RubricId == rubricId);
 
@@ -754,17 +709,14 @@ namespace backend.Infrastructure.Services
 
         public async Task<EnhancedStudentEvaluationDto> EvaluateStudentWithRubricAsync(int teacherId, EvaluateStudentDto evaluationDto)
         {
-            // Check if group evaluation exists
             var groupEvaluation = await _unitOfWork.Evaluations.GetGroupEvaluationByIdAsync(evaluationDto.GroupEvaluationId);
             if (groupEvaluation == null)
                 throw new ApplicationException($"Group evaluation with ID {evaluationDto.GroupEvaluationId} not found");
 
-            // Get the event and check if it has a rubric
             var evaluationEvent = await _unitOfWork.Evaluations.GetEventByIdAsync(groupEvaluation.EventId);
             if (evaluationEvent == null)
                 throw new ApplicationException("Evaluation event not found");
 
-            // Check if student exists and is part of the group
             var student = await _unitOfWork.Students.GetStudentByIdAsync(evaluationDto.StudentId);
             if (student == null)
                 throw new ApplicationException($"Student with ID {evaluationDto.StudentId} not found");
@@ -773,187 +725,181 @@ namespace backend.Infrastructure.Services
             if (!studentInGroup)
                 throw new ApplicationException("Student is not a member of the group being evaluated");
 
-            // Get or create student evaluation
+            var panel = await _unitOfWork.Panels.GetPanelByIdAsync(groupEvaluation.PanelId);
+            if (panel == null)
+                throw new ApplicationException("Panel not found for this group evaluation");
+
             var studentEvaluation = groupEvaluation.StudentEvaluations
                 .FirstOrDefault(se => se.StudentId == evaluationDto.StudentId);
 
             if (studentEvaluation == null)
             {
-                // Create new evaluation
                 studentEvaluation = new StudentEvaluation
                 {
                     GroupEvaluationId = evaluationDto.GroupEvaluationId,
                     StudentId = evaluationDto.StudentId,
                     RubricId = evaluationEvent.RubricId,
-                    ObtainedMarks = 0, // Will calculate later
-                    Feedback = string.Empty, // Will compile feedback from all evaluators
-                    EvaluatedAt = DateTime.Now,
-                    IsComplete = false
+                    ObtainedMarks = 0,
+                    Feedback = string.Empty,
+                    EvaluatedAt = DateTime.UtcNow,
+                    IsComplete = false,
+                    RequiredEvaluatorsCount = panel.Members.Count
                 };
 
-                var createdEvaluation = await _unitOfWork.Evaluations.EvaluateStudentAsync(studentEvaluation);
-                await _unitOfWork.SaveChangesAsync(); // Save to get ID
-
-                studentEvaluation = createdEvaluation; // Use the created entity with ID
+                groupEvaluation.StudentEvaluations.Add(studentEvaluation);
+                await _unitOfWork.SaveChangesAsync();
             }
 
-            // *** FIXED: Check if this teacher has already evaluated this student for a rubric-based evaluation ***
-            var rubricBasedEvaluation = evaluationEvent.RubricId.HasValue;
+            var existingScores = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAndEvaluatorIdAsync(
+                studentEvaluation.Id, teacherId);
 
-            if (rubricBasedEvaluation)
-            {
-                var hasEvaluatedAllCategories = false;
+            bool hasEvaluatedAllCategories = false;
 
-                if (evaluationDto.CategoryScores != null && evaluationDto.CategoryScores.Any())
-                {
-                    var rubric = await _unitOfWork.Rubrics.GetRubricWithCategoriesAsync(evaluationEvent.RubricId.Value);
-                    if (rubric == null)
-                        throw new ApplicationException("Rubric not found for this evaluation event");
-
-                    // Get existing category scores by this teacher
-                    var existingScores = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAsync(studentEvaluation.Id);
-                    var teacherScores = existingScores.Where(s => s.EvaluatorId == teacherId).ToList();
-
-                    // Check if teacher has already scored all the categories being submitted
-                    hasEvaluatedAllCategories = evaluationDto.CategoryScores.All(cs =>
-                        teacherScores.Any(ts => ts.CategoryId == cs.CategoryId));
-
-                    if (hasEvaluatedAllCategories)
-                        throw new ApplicationException("You have already evaluated these categories for this student");
-                }
-            }
-            else
-            {
-                // For non-rubric evaluations, check if any evaluation exists
-                bool hasEvaluated = await _unitOfWork.Evaluations.HasTeacherEvaluatedStudentAsync(teacherId, studentEvaluation.Id);
-                if (hasEvaluated)
-                {
-                    throw new ApplicationException("You have already evaluated this student for this event");
-                }
-            }
-
-            // Add teacher as evaluator if not already added
-            await _unitOfWork.Evaluations.AddEvaluatorToStudentEvaluationAsync(studentEvaluation.Id, teacherId);
-
-            // Handle rubric-based evaluation
-            if (rubricBasedEvaluation && evaluationDto.CategoryScores != null && evaluationDto.CategoryScores.Any())
+            if (evaluationEvent.RubricId.HasValue)
             {
                 var rubric = await _unitOfWork.Rubrics.GetRubricWithCategoriesAsync(evaluationEvent.RubricId.Value);
                 if (rubric == null)
                     throw new ApplicationException("Rubric not found for this evaluation event");
 
-                // Get existing scores for this student evaluation
-                var existingScores = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAsync(studentEvaluation.Id);
+                var teacherScores = existingScores.ToList();
+                var allCategories = rubric.Categories.Select(c => c.Id).ToList();
 
-                // Evaluate each category
-                foreach (var categoryScore in evaluationDto.CategoryScores)
+                hasEvaluatedAllCategories = allCategories.All(categoryId =>
+                    teacherScores.Any(ts => ts.CategoryId == categoryId));
+            }
+
+            if (hasEvaluatedAllCategories)
+            {
+                Console.WriteLine($"Teacher {teacherId} is updating their previous evaluation for student {evaluationDto.StudentId}");
+            }
+
+            if (evaluationDto.CategoryScores != null)
+            {
+                if (!evaluationEvent.RubricId.HasValue)
+                    throw new ApplicationException("Cannot submit category scores for a non-rubric evaluation");
+
+                var rubric = await _unitOfWork.Rubrics.GetRubricWithCategoriesAsync(evaluationEvent.RubricId.Value);
+                if (rubric == null)
+                    throw new ApplicationException("Rubric not found for this evaluation event");
+
+                foreach (var scoreDto in evaluationDto.CategoryScores)
                 {
-                    var category = rubric.Categories.FirstOrDefault(c => c.Id == categoryScore.CategoryId);
-                    if (category == null)
-                        throw new ApplicationException($"Category with ID {categoryScore.CategoryId} not found in rubric");
+                    var category = rubric.Categories.FirstOrDefault(c => c.Id == scoreDto.CategoryId);
+                    if (category == null) continue;
 
-                    // Validate score
-                    if (categoryScore.Score < 0 || categoryScore.Score > category.MaxScore)
-                        throw new ApplicationException($"Score for {category.Name} must be between 0 and {category.MaxScore}");
+                    if (scoreDto.Score < 0 || scoreDto.Score > category.MaxScore)
+                        throw new ApplicationException($"Score for category {category.Name} must be between 0 and {category.MaxScore}");
 
-                    // Check if this teacher has already scored this category
-                    var existingScore = existingScores.FirstOrDefault(s =>
-                        s.CategoryId == categoryScore.CategoryId && s.EvaluatorId == teacherId);
+                    var existingScore = existingScores.FirstOrDefault(s => s.CategoryId == scoreDto.CategoryId);
 
                     if (existingScore != null)
                     {
-                        // Update existing score
-                        existingScore.Score = categoryScore.Score;
-                        existingScore.Feedback = categoryScore.Feedback;
-                        existingScore.EvaluatedAt = DateTime.Now;
+                        existingScore.Score = scoreDto.Score;
+                        existingScore.Feedback = scoreDto.Feedback;
+                        existingScore.EvaluatedAt = DateTime.UtcNow;
                     }
                     else
                     {
-                        // Save new category score
                         var score = new StudentCategoryScore
                         {
                             StudentEvaluationId = studentEvaluation.Id,
-                            CategoryId = categoryScore.CategoryId,
-                            Score = categoryScore.Score,
-                            Feedback = categoryScore.Feedback,
+                            CategoryId = scoreDto.CategoryId,
+                            Score = scoreDto.Score,
+                            Feedback = scoreDto.Feedback,
                             EvaluatorId = teacherId,
-                            EvaluatedAt = DateTime.Now
+                            EvaluatedAt = DateTime.UtcNow
                         };
 
-                        await _unitOfWork.Rubrics.AddCategoryScoreAsync(score);
+                        studentEvaluation.CategoryScores.Add(score);
                     }
                 }
 
-                // Calculate total marks based on category scores
-                await CalculateObtainedMarksFromCategoryScores(studentEvaluation.Id, evaluationEvent);
-
-                // Make sure changes are saved here too
                 await _unitOfWork.SaveChangesAsync();
 
-                // Compile feedback from all evaluators
-                await CompileAndUpdateFeedbackAsync(studentEvaluation.Id);
+                var uniqueEvaluators = await _unitOfWork.Rubrics.GetUniqueEvaluatorsCountForStudentEvaluationAsync(studentEvaluation.Id);
+
+                bool allRequiredEvaluatorsCompleted = uniqueEvaluators >= studentEvaluation.RequiredEvaluatorsCount;
+
+                if (allRequiredEvaluatorsCompleted && !studentEvaluation.IsComplete)
+                {
+                    studentEvaluation.IsComplete = true;
+
+                    await CalculateObtainedMarksFromCategoryScores(studentEvaluation.Id, evaluationEvent);
+
+                    await _unitOfWork.SaveChangesAsync();
+
+                    await CompileAndUpdateFeedbackAsync(studentEvaluation.Id);
+                }
             }
             else if (evaluationDto.ObtainedMarks.HasValue)
             {
-                // Legacy evaluation with single score
                 if (evaluationDto.ObtainedMarks < 0 || evaluationDto.ObtainedMarks > evaluationEvent.TotalMarks)
                     throw new ApplicationException($"Marks must be between 0 and {evaluationEvent.TotalMarks}");
 
-                studentEvaluation.ObtainedMarks = evaluationDto.ObtainedMarks.Value;
-                studentEvaluation.Feedback = evaluationDto.Feedback ?? studentEvaluation.Feedback;
-            }
-            else
-            {
-                throw new ApplicationException("Either category scores or total marks must be provided");
-            }
+                await _unitOfWork.Evaluations.AddEvaluatorToStudentEvaluationAsync(studentEvaluation.Id, teacherId);
 
-            // Check if all required evaluators have evaluated (for rubric-based evaluation)
-            bool allCategoriesEvaluated = true;
-
-            if (rubricBasedEvaluation)
-            {
-                var rubric = await _unitOfWork.Rubrics.GetRubricWithCategoriesAsync(evaluationEvent.RubricId.Value);
-                var categoryScores = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAsync(studentEvaluation.Id);
-
-                // Check if all categories have been evaluated (by at least one teacher)
-                allCategoriesEvaluated = rubric.Categories.All(c =>
-                    categoryScores.Any(s => s.CategoryId == c.Id));
-            }
-
-            // Mark as complete if all evaluators have evaluated or if using legacy evaluation
-            studentEvaluation.IsComplete = rubricBasedEvaluation
-                ? allCategoriesEvaluated
-                : true;
-
-            // Check if all students in the group have been evaluated
-            if (studentEvaluation.IsComplete)
-            {
-                var groupMembers = groupEvaluation.Group.Members.Count();
-                var completedEvaluations = groupEvaluation.StudentEvaluations.Count(se => se.IsComplete);
-
-                if (groupMembers == completedEvaluations)
+                var simpleScore = new StudentCategoryScore
                 {
-                    groupEvaluation.IsCompleted = true;
+                    StudentEvaluationId = studentEvaluation.Id,
+                    CategoryId = 0,
+                    Score = evaluationDto.ObtainedMarks.Value,
+                    Feedback = evaluationDto.Feedback ?? string.Empty,
+                    EvaluatorId = teacherId,
+                    EvaluatedAt = DateTime.UtcNow
+                };
+
+                var existingSimpleScore = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAndEvaluatorIdAsync(
+                    studentEvaluation.Id, teacherId);
+
+                var existingScore = existingSimpleScore.FirstOrDefault(s => s.CategoryId == 0);
+
+                if (existingScore != null)
+                {
+                    existingScore.Score = evaluationDto.ObtainedMarks.Value;
+                    existingScore.Feedback = evaluationDto.Feedback ?? string.Empty;
+                    existingScore.EvaluatedAt = DateTime.UtcNow;
+                }
+                else
+                {
+                    studentEvaluation.CategoryScores.Add(simpleScore);
+                }
+
+                await _unitOfWork.SaveChangesAsync();
+
+                var uniqueEvaluators = await _unitOfWork.Rubrics.GetUniqueEvaluatorsCountForStudentEvaluationAsync(studentEvaluation.Id);
+                bool allRequiredEvaluatorsCompleted = uniqueEvaluators >= studentEvaluation.RequiredEvaluatorsCount;
+
+                if (allRequiredEvaluatorsCompleted && !studentEvaluation.IsComplete)
+                {
+                    studentEvaluation.IsComplete = true;
+
+                    var allScores = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAsync(studentEvaluation.Id);
+                    studentEvaluation.ObtainedMarks = (int)Math.Round(allScores.Average(s => s.Score));
+
+                    await _unitOfWork.SaveChangesAsync();
                 }
             }
 
-            await _unitOfWork.SaveChangesAsync();
-
-            // Return enhanced DTO with category scores
             return await MapToEnhancedStudentEvaluationDtoAsync(studentEvaluation);
         }
 
-        // New helper method to compile feedback from all evaluators
         private async Task CompileAndUpdateFeedbackAsync(int studentEvaluationId)
         {
             var studentEvaluation = await _unitOfWork.Evaluations.GetStudentEvaluationByIdAsync(studentEvaluationId);
             if (studentEvaluation == null) return;
 
             var categoryScores = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAsync(studentEvaluationId);
-            var evaluators = await _unitOfWork.Evaluations.GetEvaluatorsByStudentEvaluationIdAsync(studentEvaluationId);
+            if (categoryScores == null || !categoryScores.Any()) return;
 
-            // Group feedback by evaluator
+            var evaluators = await _unitOfWork.Evaluations.GetEvaluatorsByStudentEvaluationIdAsync(studentEvaluationId);
+            if (evaluators == null || !evaluators.Any()) return;
+
             var feedbackByEvaluator = new Dictionary<int, List<string>>();
+
+            foreach (var evaluator in evaluators)
+            {
+                feedbackByEvaluator[evaluator.Id] = new List<string>();
+            }
 
             foreach (var score in categoryScores.Where(s => !string.IsNullOrEmpty(s.Feedback)))
             {
@@ -961,16 +907,23 @@ namespace backend.Infrastructure.Services
                     feedbackByEvaluator[score.EvaluatorId] = new List<string>();
 
                 var evaluator = evaluators.FirstOrDefault(e => e.Id == score.EvaluatorId);
-                var evaluatorName = evaluator?.FullName ?? "Unknown Evaluator";
-                var category = score.Category?.Name ?? "Unknown Category";
+                var category = score.Category;
 
-                feedbackByEvaluator[score.EvaluatorId].Add($"{category}: {score.Feedback}");
+                if (category != null)
+                {
+                    feedbackByEvaluator[score.EvaluatorId].Add($"{category.Name}: {score.Feedback}");
+                }
+                else
+                {
+                    feedbackByEvaluator[score.EvaluatorId].Add(score.Feedback);
+                }
             }
 
-            // Compile feedback with evaluator names
             var compiledFeedback = new StringBuilder();
             foreach (var kvp in feedbackByEvaluator)
             {
+                if (!kvp.Value.Any()) continue;
+
                 var evaluator = evaluators.FirstOrDefault(e => e.Id == kvp.Key);
                 var evaluatorName = evaluator?.FullName ?? "Unknown Evaluator";
 
@@ -983,67 +936,83 @@ namespace backend.Infrastructure.Services
             }
 
             studentEvaluation.Feedback = compiledFeedback.ToString().Trim();
+            await _unitOfWork.SaveChangesAsync();
         }
 
         private async Task CalculateObtainedMarksFromCategoryScores(int studentEvaluationId, EvaluationEvent evaluationEvent)
         {
-            if (!evaluationEvent.RubricId.HasValue)
-                return;
-
-            var rubric = await _unitOfWork.Rubrics.GetRubricWithCategoriesAsync(evaluationEvent.RubricId.Value);
-            if (rubric == null)
-                return;
-
-            var categoryScores = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAsync(studentEvaluationId);
-            if (!categoryScores.Any())
-                return;
-
-            double weightedTotal = 0;
-
-            // Get the student evaluation directly
             var studentEvaluation = await _unitOfWork.Evaluations.GetStudentEvaluationByIdAsync(studentEvaluationId);
-            if (studentEvaluation == null)
-                return;
+            if (studentEvaluation == null) return;
 
-            foreach (var category in rubric.Categories)
+            if (!evaluationEvent.RubricId.HasValue)
             {
-                var scores = categoryScores.Where(s => s.CategoryId == category.Id).ToList();
-                if (scores.Any())
-                {
-                    // Average scores if multiple evaluators scored the same category
-                    double averageScore = scores.Average(s => s.Score);
-
-                    // Calculate weighted score
-                    weightedTotal += (averageScore / category.MaxScore) * category.Weight;
-                }
+                return;
             }
 
-            // Scale to event total marks
-            int totalMarks = (int)Math.Round(weightedTotal * evaluationEvent.TotalMarks);
+            var rubric = await _unitOfWork.Rubrics.GetRubricWithCategoriesAsync(evaluationEvent.RubricId.Value);
+            if (rubric == null) return;
 
-            studentEvaluation.ObtainedMarks = totalMarks;
+            var allScores = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAsync(studentEvaluationId);
+            if (allScores == null)
+            {
+                allScores = new List<StudentCategoryScore>();
+            }
 
-            // Make sure to update both the student evaluation and save changes
-            await _unitOfWork.Evaluations.UpdateStudentEvaluationAsync(studentEvaluation);
-            await _unitOfWork.SaveChangesAsync(); // Add this line to ensure changes are saved
+            var evaluatorIds = allScores.Select(s => s.EvaluatorId).Distinct().ToList();
+            if (evaluatorIds.Count == 0) return;
+
+            double totalScore = 0;
+            foreach (var evaluatorId in evaluatorIds)
+            {
+                var evaluatorScores = allScores.Where(s => s.EvaluatorId == evaluatorId).ToList();
+
+                double evaluatorWeightedTotal = 0;
+                double totalWeight = 0;
+
+                foreach (var category in rubric.Categories)
+                {
+                    if (category == null) continue;
+
+                    var score = evaluatorScores.FirstOrDefault(s => s.CategoryId == category.Id);
+                    if (score != null)
+                    {
+                        double scorePercentage = (double)score.Score / category.MaxScore;
+                        evaluatorWeightedTotal += scorePercentage * category.Weight;
+                        totalWeight += category.Weight;
+                    }
+                }
+
+                double evaluatorScore = 0;
+                if (totalWeight > 0)
+                {
+                    double weightedPercentage = evaluatorWeightedTotal / totalWeight;
+                    evaluatorScore = weightedPercentage * 100;
+                }
+
+                totalScore += evaluatorScore;
+            }
+
+            double averageScore = evaluatorIds.Count > 0 ? totalScore / evaluatorIds.Count : 0;
+
+            int calculatedFinalScore = (int)Math.Round((averageScore / 100) * evaluationEvent.TotalMarks);
+
+            studentEvaluation.ObtainedMarks = calculatedFinalScore;
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task<EnhancedStudentEvaluationDto> MapToEnhancedStudentEvaluationDtoAsync(StudentEvaluation evaluation)
         {
             var student = await _unitOfWork.Students.GetStudentByIdAsync(evaluation.StudentId);
             var groupEvaluation = await _unitOfWork.Evaluations.GetGroupEvaluationByIdAsync(evaluation.GroupEvaluationId);
-            var evaluationEvent = await _unitOfWork.Evaluations.GetEventByIdAsync(groupEvaluation.EventId);
+            var evaluationEvent = await _unitOfWork.Evaluations.GetEventByIdAsync(groupEvaluation?.EventId ?? 0);
 
-            // Safely handle null values
             int totalMarks = evaluationEvent?.TotalMarks ?? 0;
             double eventWeight = evaluationEvent?.Weight ?? 1.0;
 
-            // Calculate percentage with null checks
             decimal? percentageObtained = totalMarks > 0
                 ? (decimal?)((evaluation.ObtainedMarks * 100.0) / totalMarks)
                 : 0;
 
-            // Calculate weighted score
             double weightedScore = totalMarks > 0
                 ? (evaluation.ObtainedMarks * 100.0 * eventWeight) / totalMarks
                 : 0;
@@ -1065,7 +1034,6 @@ namespace backend.Infrastructure.Services
                 Evaluators = new List<EvaluatorDto>()
             };
 
-            // Get all evaluators
             var evaluators = await _unitOfWork.Evaluations.GetEvaluatorsByStudentEvaluationIdAsync(evaluation.Id);
             foreach (var evaluator in evaluators)
             {
@@ -1076,51 +1044,54 @@ namespace backend.Infrastructure.Services
                 });
             }
 
-            // Add category scores with evaluator details
             if (evaluation.RubricId.HasValue)
             {
                 var categoryScores = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAsync(evaluation.Id);
 
-                // Group by category to show multiple evaluators' scores for each category
-                var scoresByCategory = categoryScores.GroupBy(s => s.CategoryId);
-
-                foreach (var categoryGroup in scoresByCategory)
+                if (categoryScores != null)
                 {
-                    var firstScore = categoryGroup.First();
-                    var category = firstScore.Category;
+                    var scoresByCategory = categoryScores.GroupBy(s => s.CategoryId);
 
-                    // Calculate average score for this category
-                    double averageScore = categoryGroup.Average(s => s.Score);
-
-                    var categoryDto = new CategoryScoreDetailDto
+                    foreach (var categoryGroup in scoresByCategory)
                     {
-                        CategoryId = category.Id,
-                        CategoryName = category.Name,
-                        CategoryWeight = category.Weight,
-                        Score = (int)Math.Round(averageScore), // Average score rounded to nearest integer
-                        MaxScore = category.MaxScore,
-                        WeightedScore = (averageScore * category.Weight) / category.MaxScore * 100,
-                        Feedback = string.Join("\n", categoryGroup.Where(s => !string.IsNullOrEmpty(s.Feedback))
-                                                   .Select(s => $"{s.Feedback} (by {evaluators.FirstOrDefault(e => e.Id == s.EvaluatorId)?.FullName ?? "Unknown"})")),
-                        EvaluatorDetails = new List<CategoryEvaluatorDetailDto>()
-                    };
+                        var firstScore = categoryGroup.First();
+                        var category = firstScore.Category;
 
-                    // Add individual evaluator scores for this category
-                    foreach (var score in categoryGroup)
-                    {
-                        var evaluator = evaluators.FirstOrDefault(e => e.Id == score.EvaluatorId);
+                        double averageScore = categoryGroup.Average(s => s.Score);
+                        var categoryWeight = category?.Weight ?? 0;
+                        var categoryMaxScore = category?.MaxScore ?? 1;
 
-                        categoryDto.EvaluatorDetails.Add(new CategoryEvaluatorDetailDto
+                        var categoryDto = new CategoryScoreDetailDto
                         {
-                            EvaluatorId = score.EvaluatorId,
-                            EvaluatorName = evaluator?.FullName ?? "Unknown",
-                            Score = score.Score,
-                            Feedback = score.Feedback,
-                            EvaluatedAt = score.EvaluatedAt
-                        });
-                    }
+                            CategoryId = category?.Id ?? 0,
+                            CategoryName = category?.Name ?? "Unknown",
+                            CategoryWeight = categoryWeight,
+                            Score = (int)Math.Round(averageScore),
+                            MaxScore = categoryMaxScore,
+                            WeightedScore = category != null && category.MaxScore > 0
+                                ? (averageScore * category.Weight) / category.MaxScore * 100
+                                : 0,
+                            Feedback = string.Join("\n", categoryGroup.Where(s => !string.IsNullOrEmpty(s.Feedback))
+                                                       .Select(s => $"{s.Feedback} (by {evaluators?.FirstOrDefault(e => e.Id == s.EvaluatorId)?.FullName ?? "Unknown"})")),
+                            EvaluatorDetails = new List<CategoryEvaluatorDetailDto>()
+                        };
 
-                    dto.CategoryScores.Add(categoryDto);
+                        foreach (var score in categoryGroup)
+                        {
+                            var evaluator = evaluators?.FirstOrDefault(e => e.Id == score.EvaluatorId);
+
+                            categoryDto.EvaluatorDetails.Add(new CategoryEvaluatorDetailDto
+                            {
+                                EvaluatorId = score.EvaluatorId,
+                                EvaluatorName = evaluator?.FullName ?? "Unknown",
+                                Score = score.Score,
+                                Feedback = score.Feedback ?? "",
+                                EvaluatedAt = score.EvaluatedAt
+                            });
+                        }
+
+                        dto.CategoryScores.Add(categoryDto);
+                    }
                 }
             }
 
@@ -1129,7 +1100,6 @@ namespace backend.Infrastructure.Services
 
         private async Task<EvaluationRubricDto> MapRubricToDto(EvaluationRubric rubric)
         {
-            // Load categories if not already loaded
             var rubricWithCategories = await _unitOfWork.Rubrics.GetRubricWithCategoriesAsync(rubric.Id);
             if (rubricWithCategories != null)
             {
@@ -1161,10 +1131,8 @@ namespace backend.Infrastructure.Services
 
         public async Task<List<NormalizedGradeDto>> GetNormalizedGradesAsync()
         {
-            // Get all completed evaluations
             var allEvaluations = await _unitOfWork.Evaluations.GetAllStudentEvaluationsForNormalizationAsync();
 
-            // Group by student
             var studentGroups = allEvaluations
                 .GroupBy(se => se.StudentId)
                 .ToList();
@@ -1172,7 +1140,6 @@ namespace backend.Infrastructure.Services
             if (!studentGroups.Any())
                 return new List<NormalizedGradeDto>();
 
-            // Calculate raw scores for each student
             var rawScores = new List<(int StudentId, string StudentName, double Score)>();
 
             foreach (var group in studentGroups)
@@ -1181,15 +1148,21 @@ namespace backend.Infrastructure.Services
                 var student = await _unitOfWork.Students.GetStudentByIdAsync(studentId);
                 if (student == null) continue;
 
-                double finalGrade = await CalculateFinalGradeAsync(studentId);
-                rawScores.Add((studentId, student.FullName, finalGrade));
+                double finalGrade = 0;
+                try
+                {
+                    finalGrade = await CalculateFinalGradeAsync(studentId);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error calculating final grade: {ex.Message}");
+                }
+                rawScores.Add((studentId, student?.FullName ?? "Unknown", finalGrade));
             }
 
-            // Calculate statistics for normalization
             double mean = rawScores.Average(s => s.Score);
             double stdDev = Math.Sqrt(rawScores.Average(s => Math.Pow(s.Score - mean, 2)));
 
-            // Normalize scores (z-score * 10 + 70 to center around 70%)
             var normalizedScores = rawScores
                 .Select(s => new NormalizedGradeDto
                 {
@@ -1198,7 +1171,7 @@ namespace backend.Infrastructure.Services
                     RawGrade = s.Score,
                     NormalizedGrade = stdDev > 0
                         ? Math.Min(100, Math.Max(0, ((s.Score - mean) / stdDev) * 10 + 70))
-                        : s.Score // If no variation, keep raw score
+                        : s.Score
                 })
                 .OrderByDescending(s => s.NormalizedGrade)
                 .ToList();
@@ -1237,16 +1210,14 @@ namespace backend.Infrastructure.Services
 
             await _unitOfWork.Evaluations.MarkEvaluationAsCompleteAsync(evaluationId);
 
-            // Check if all students in the group have been evaluated
             var groupEvaluation = await _unitOfWork.Evaluations.GetGroupEvaluationByIdAsync(evaluation.GroupEvaluationId);
-            if (groupEvaluation != null)
+            if (groupEvaluation?.IsCompleted != true)
             {
                 var groupMembers = groupEvaluation.Group.Members.Count();
                 var completedEvaluations = groupEvaluation.StudentEvaluations.Count(se => se.IsComplete);
 
                 if (groupMembers == completedEvaluations)
                 {
-                    // Mark the group evaluation as completed
                     groupEvaluation.IsCompleted = true;
                     await _unitOfWork.Evaluations.UpdateGroupEvaluationAsync(groupEvaluation);
                 }
@@ -1259,20 +1230,242 @@ namespace backend.Infrastructure.Services
         private async Task UpdateFinalMarks(StudentEvaluation evaluation)
         {
             var evaluationEvent = await _unitOfWork.Evaluations.GetEventByIdAsync(evaluation.GroupEvaluation.EventId);
+            if (evaluationEvent == null) return;
+
             var allScores = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAsync(evaluation.Id);
+            if (allScores == null || !allScores.Any()) return;
 
             if (evaluationEvent.RubricId.HasValue)
             {
-                // For rubric-based evaluation
                 await CalculateObtainedMarksFromCategoryScores(evaluation.Id, evaluationEvent);
             }
             else
             {
-                // For simple evaluation
                 evaluation.ObtainedMarks = (int)Math.Round(allScores.Average(s => s.Score));
             }
         }
 
+        public async Task<EvaluationStatisticsDto> GetEvaluationStatisticsAsync(int groupEvaluationId, int studentId)
+        {
+            var groupEvaluation = await _unitOfWork.Evaluations.GetGroupEvaluationByIdAsync(groupEvaluationId);
+            if (groupEvaluation == null)
+                throw new ApplicationException("Group evaluation not found");
+
+            var student = await _unitOfWork.Students.GetStudentByIdAsync(studentId);
+            if (student == null)
+                throw new ApplicationException("Student not found");
+
+            var panel = await _unitOfWork.Panels.GetPanelByIdAsync(groupEvaluation.PanelId);
+            if (panel == null)
+                throw new ApplicationException("Panel not found");
+
+            var studentEvaluation = groupEvaluation.StudentEvaluations
+                .FirstOrDefault(se => se.StudentId == studentId);
+
+            var allScores = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAsync(studentEvaluation?.Id ?? 0);
+            if (allScores == null || !allScores.Any())
+            {
+                return new EvaluationStatisticsDto
+                {
+                    StudentId = studentId,
+                    StudentName = student?.FullName ?? "Unknown",
+                    TotalEvaluators = panel?.Members?.Count ?? 0,
+                    CompletedEvaluators = 0,
+                    RemainingEvaluators = panel?.Members?.Count ?? 0,
+                    IsComplete = false,
+                    FinalScore = 0,
+                    EvaluatorSummaries = new List<EvaluatorSummaryDto>()
+                };
+            }
+
+            var evaluatorIds = allScores.Select(s => s.EvaluatorId).Distinct().ToList();
+
+            var evaluatorSummaries = new List<EvaluatorSummaryDto>();
+
+            foreach (var member in panel.Members)
+            {
+                var teacherId = member.TeacherId;
+                var teacher = member.Teacher;
+                var hasEvaluated = evaluatorIds.Contains(teacherId);
+
+                int? averageScore = null;
+                DateTime? evaluatedAt = null;
+
+                if (hasEvaluated)
+                {
+                    var teacherScores = allScores.Where(s => s.EvaluatorId == teacherId).ToList();
+                    if (teacherScores.Any())
+                    {
+                        var event_ = await _unitOfWork.Evaluations.GetEventByIdAsync(groupEvaluation.EventId);
+                        var rubricId = event_?.RubricId;
+                        if (!rubricId.HasValue) continue;
+
+                        var rubric = await _unitOfWork.Rubrics.GetRubricWithCategoriesAsync(rubricId.Value);
+                        if (rubric == null) continue;
+
+                        double evaluatorWeightedTotal = 0;
+                        double totalWeight = 0;
+
+                        foreach (var category in rubric.Categories)
+                        {
+                            var score = teacherScores.FirstOrDefault(s => s.CategoryId == category.Id);
+                            if (score != null)
+                            {
+                                double scorePercentage = (double)score.Score / category.MaxScore;
+                                evaluatorWeightedTotal += scorePercentage * category.Weight;
+                                totalWeight += category.Weight;
+                            }
+                        }
+
+                        double evaluatorScore = 0;
+                        if (totalWeight > 0)
+                        {
+                            double weightedPercentage = evaluatorWeightedTotal / totalWeight;
+                            evaluatorScore = weightedPercentage * 100;
+                        }
+
+                        averageScore = (int)Math.Round(evaluatorScore * event_.TotalMarks / 100);
+                        evaluatedAt = teacherScores.Max(s => s.EvaluatedAt);
+                    }
+                }
+
+                evaluatorSummaries.Add(new EvaluatorSummaryDto
+                {
+                    EvaluatorId = teacherId,
+                    EvaluatorName = teacher.FullName,
+                    HasEvaluated = hasEvaluated,
+                    AverageScore = averageScore,
+                    EvaluatedAt = evaluatedAt
+                });
+            }
+
+            return new EvaluationStatisticsDto
+            {
+                StudentEvaluationId = studentEvaluation.Id,
+                StudentId = studentId,
+                StudentName = student.FullName,
+                TotalEvaluators = panel.Members.Count,
+                CompletedEvaluators = evaluatorIds.Count,
+                RemainingEvaluators = panel.Members.Count - evaluatorIds.Count,
+                IsComplete = studentEvaluation.IsComplete,
+                FinalScore = studentEvaluation.ObtainedMarks,
+                EvaluatorSummaries = evaluatorSummaries
+            };
+        }
+
+        public async Task<StudentEvaluation> GetStudentEvaluationByGroupEvaluationAndStudentIdAsync(int groupEvaluationId, int studentId)
+        {
+            var groupEvaluation = await _unitOfWork.Evaluations.GetGroupEvaluationByIdAsync(groupEvaluationId);
+            if (groupEvaluation == null)
+                throw new ApplicationException($"Group evaluation with ID {groupEvaluationId} not found");
+
+            var studentEvaluation = groupEvaluation.StudentEvaluations?
+                .FirstOrDefault(se => se.StudentId == studentId);
+
+            return studentEvaluation ?? throw new ApplicationException($"Student evaluation not found for student ID {studentId} in group evaluation {groupEvaluationId}");
+        }
+
+        public async Task<EnhancedStudentEvaluationDto> GetTeacherEvaluationForStudentAsync(int teacherId, int groupEvaluationId, int studentId)
+        {
+            var groupEvaluation = await _unitOfWork.Evaluations.GetGroupEvaluationByIdAsync(groupEvaluationId);
+            if (groupEvaluation == null)
+                throw new ApplicationException($"Group evaluation with ID {groupEvaluationId} not found");
+
+            var studentEvaluation = groupEvaluation.StudentEvaluations?
+                .FirstOrDefault(se => se.StudentId == studentId);
+
+            var student = await _unitOfWork.Students.GetStudentByIdAsync(studentId);
+            var evaluationEvent = await _unitOfWork.Evaluations.GetEventByIdAsync(groupEvaluation.EventId);
+
+            var resultDto = new EnhancedStudentEvaluationDto
+            {
+                StudentId = studentId,
+                StudentName = student?.FullName ?? "Unknown",
+                EventName = evaluationEvent?.Name,
+                TotalMarks = evaluationEvent?.TotalMarks ?? 0,
+                EventDate = evaluationEvent?.Date,
+                CategoryScores = new List<CategoryScoreDetailDto>(),
+                Evaluators = new List<EvaluatorDto>(),
+                IsComplete = false
+            };
+
+            if (studentEvaluation == null)
+            {
+                return resultDto;
+            }
+
+            var teacherScores = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAndEvaluatorIdAsync(
+                studentEvaluation.Id, teacherId);
+
+            bool hasTeacherEvaluated = teacherScores != null && teacherScores.Any();
+
+            if (!hasTeacherEvaluated)
+            {
+                resultDto.Id = studentEvaluation.Id;
+                resultDto.IsComplete = studentEvaluation.IsComplete;
+                return resultDto;
+            }
+
+            if (evaluationEvent?.RubricId.HasValue == true)
+            {
+                var rubric = await _unitOfWork.Rubrics.GetRubricWithCategoriesAsync(evaluationEvent.RubricId.Value);
+                if (rubric != null)
+                {
+                    foreach (var category in rubric.Categories)
+                    {
+                        var score = teacherScores != null ? teacherScores.FirstOrDefault(s => s.CategoryId == category.Id) : null;
+                        if (score != null)
+                        {
+                            resultDto.CategoryScores.Add(new CategoryScoreDetailDto
+                            {
+                                CategoryId = category.Id,
+                                CategoryName = category.Name,
+                                CategoryWeight = category.Weight,
+                                Score = score.Score,
+                                MaxScore = category.MaxScore,
+                                Feedback = score.Feedback,
+                                EvaluatorDetails = new List<CategoryEvaluatorDetailDto>
+                                {
+                                    new CategoryEvaluatorDetailDto
+                                    {
+                                        EvaluatorId = teacherId,
+                                        Score = score.Score,
+                                        Feedback = score.Feedback,
+                                        EvaluatedAt = score.EvaluatedAt
+                                    }
+                                }
+                            });
+                        }
+                        else
+                        {
+                            resultDto.CategoryScores.Add(new CategoryScoreDetailDto
+                            {
+                                CategoryId = category.Id,
+                                CategoryName = category.Name,
+                                CategoryWeight = category.Weight,
+                                Score = 0,
+                                MaxScore = category.MaxScore,
+                                Feedback = "",
+                                EvaluatorDetails = new List<CategoryEvaluatorDetailDto>()
+                            });
+                        }
+                    }
+                }
+            }
+
+            var teacherFeedback = teacherScores != null ?
+                teacherScores.Where(s => !string.IsNullOrEmpty(s.Feedback))
+                    .Select(s => s.Feedback)
+                    .FirstOrDefault() : null;
+
+            resultDto.Id = studentEvaluation.Id;
+            resultDto.ObtainedMarks = studentEvaluation.ObtainedMarks;
+            resultDto.Feedback = teacherFeedback ?? string.Empty;
+            resultDto.EvaluatedAt = teacherScores.Any() ? teacherScores.Max(s => s.EvaluatedAt) : DateTime.MinValue;
+            resultDto.IsComplete = studentEvaluation.IsComplete;
+
+            return resultDto;
+        }
     }
 }
 

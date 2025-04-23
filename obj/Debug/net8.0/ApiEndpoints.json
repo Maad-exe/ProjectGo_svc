@@ -974,6 +974,68 @@
   },
   {
     "ContainingType": "backend.Controllers.TeacherEvaluationController",
+    "Method": "GetTeacherEvaluation",
+    "RelativePath": "api/teacher/evaluations/evaluate-student-with-rubric/{groupEvaluationId}/{studentId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "groupEvaluationId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "studentId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "backend.DTOs.PanelManagementDTOs.EnhancedStudentEvaluationDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "backend.Controllers.TeacherEvaluationController",
+    "Method": "GetEvaluationStatistics",
+    "RelativePath": "api/teacher/evaluations/evaluation-statistics/{groupEvaluationId}/{studentId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "groupEvaluationId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "studentId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "EvaluationStatisticsDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "backend.Controllers.TeacherEvaluationController",
     "Method": "CompleteEvaluation",
     "RelativePath": "api/teacher/evaluations/evaluations/{id}/complete",
     "HttpMethod": "PUT",

@@ -2020,6 +2020,104 @@
         }
       }
     },
+    "/api/teacher/evaluations/evaluation-statistics/{groupEvaluationId}/{studentId}": {
+      "get": {
+        "tags": [
+          "TeacherEvaluation"
+        ],
+        "parameters": [
+          {
+            "name": "groupEvaluationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "studentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationStatisticsDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationStatisticsDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationStatisticsDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/teacher/evaluations/evaluate-student-with-rubric/{groupEvaluationId}/{studentId}": {
+      "get": {
+        "tags": [
+          "TeacherEvaluation"
+        ],
+        "parameters": [
+          {
+            "name": "groupEvaluationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "studentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnhancedStudentEvaluationDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnhancedStudentEvaluationDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnhancedStudentEvaluationDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/users": {
       "get": {
         "tags": [
@@ -2565,6 +2663,50 @@
         },
         "additionalProperties": false
       },
+      "EvaluationStatisticsDto": {
+        "type": "object",
+        "properties": {
+          "studentEvaluationId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "studentId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "studentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "totalEvaluators": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "completedEvaluators": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "remainingEvaluators": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isComplete": {
+            "type": "boolean"
+          },
+          "finalScore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "evaluatorSummaries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvaluatorSummaryDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "EvaluatorDto": {
         "type": "object",
         "properties": {
@@ -2574,6 +2716,33 @@
           },
           "name": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EvaluatorSummaryDto": {
+        "type": "object",
+        "properties": {
+          "evaluatorId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "evaluatorName": {
+            "type": "string",
+            "nullable": true
+          },
+          "hasEvaluated": {
+            "type": "boolean"
+          },
+          "averageScore": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "evaluatedAt": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           }
         },

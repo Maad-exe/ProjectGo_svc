@@ -157,8 +157,8 @@ namespace backend.Infrastructure.Data
                     .HasForeignKey(scs => scs.CategoryId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                entity.HasIndex(scs => new { scs.StudentEvaluationId, scs.CategoryId })
-                    .IsUnique();
+                entity.HasIndex(scs => new { scs.StudentEvaluationId, scs.CategoryId, scs.EvaluatorId })
+         .IsUnique();
             });
             #endregion
 

@@ -24,17 +24,17 @@ public interface IEvaluationService
     Task<StudentEvaluationDto> EvaluateStudentAsync(EvaluateStudentDto evaluationDto);
     Task<List<StudentEvaluationDto>> GetStudentEvaluationsByGroupEvaluationIdAsync(int groupEvaluationId);
     Task<List<StudentEvaluationDto>> GetStudentProgressByStudentIdAsync(int studentId);
-    // Add this to IEvaluationService.cs
     Task<List<StudentDto>> GetStudentsForGroupEvaluationAsync(int groupEvaluationId, int teacherId);
-    // Add to interface
     Task<EnhancedStudentEvaluationDto> MapToEnhancedStudentEvaluationDtoAsync(StudentEvaluation evaluation);
+    Task<EvaluationStatisticsDto> GetEvaluationStatisticsAsync(int groupEvaluationId, int studentId);
+    Task<EnhancedStudentEvaluationDto> GetTeacherEvaluationForStudentAsync(int teacherId, int groupEvaluationId, int studentId);
+    Task<StudentEvaluation> GetStudentEvaluationByGroupEvaluationAndStudentIdAsync(int groupEvaluationId, int studentId);
 
     // Dashboard & Performance
     Task<List<GroupPerformanceDto>> GetSupervisedGroupsPerformanceAsync(int teacherId);
     Task<TeacherDashboardDto> GetTeacherDashboardAsync(int teacherId);
     Task<AdminDashboardDto> GetAdminDashboardAsync();
 
-    
     Task<EvaluationRubricDto> CreateRubricAsync(CreateRubricDto rubricDto);
     Task<List<EvaluationRubricDto>> GetAllRubricsAsync();
     Task<EvaluationRubricDto?> GetRubricByIdAsync(int rubricId);
@@ -46,5 +46,4 @@ public interface IEvaluationService
     Task<List<NormalizedGradeDto>> GetNormalizedGradesAsync();
     Task<StudentEvaluationDto> GetEvaluationByIdAsync(int evaluationId);
     Task<bool> MarkEvaluationAsCompleteAsync(int evaluationId);
-
 }

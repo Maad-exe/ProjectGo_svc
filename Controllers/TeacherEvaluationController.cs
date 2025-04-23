@@ -25,14 +25,20 @@ namespace backend.Controllers
         [HttpGet("panel-assignments")]
         public async Task<ActionResult<List<GroupEvaluationDto>>> GetTeacherPanelAssignments()
         {
-            var userId = int.Parse(User.FindFirstValue("UserId"));
+            var userIdClaim = User.FindFirstValue("UserId");
+            if (string.IsNullOrEmpty(userIdClaim))
+                return Unauthorized("User ID not found in token");
+            var userId = int.Parse(userIdClaim);
             return await _evaluationService.GetGroupEvaluationsByTeacherIdAsync(userId);
         }
 
         [HttpGet("panels")]
         public async Task<ActionResult<List<PanelDto>>> GetTeacherPanels()
         {
-            var userId = int.Parse(User.FindFirstValue("UserId"));
+            var userIdClaim = User.FindFirstValue("UserId");
+            if (string.IsNullOrEmpty(userIdClaim))
+                return Unauthorized("User ID not found in token");
+            var userId = int.Parse(userIdClaim);
             return await _panelService.GetPanelsByTeacherIdAsync(userId);
         }
 
@@ -41,7 +47,10 @@ namespace backend.Controllers
         {
             try
             {
-                var userId = int.Parse(User.FindFirstValue("UserId"));
+                var userIdClaim = User.FindFirstValue("UserId");
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return Unauthorized("User ID not found in token");
+                var userId = int.Parse(userIdClaim);
 
                 // Verify teacher is in the panel of this evaluation
                 var groupEvaluation = await _evaluationService.GetGroupEvaluationByIdAsync(evaluationDto.GroupEvaluationId);
@@ -73,7 +82,10 @@ namespace backend.Controllers
         {
             try
             {
-                var userId = int.Parse(User.FindFirstValue("UserId"));
+                var userIdClaim = User.FindFirstValue("UserId");
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return Unauthorized("User ID not found in token");
+                var userId = int.Parse(userIdClaim);
 
                 var evaluation = await _evaluationService.GetGroupEvaluationByIdAsync(id);
                 if (evaluation == null)
@@ -98,7 +110,10 @@ namespace backend.Controllers
         [HttpGet("supervised-groups/performance")]
         public async Task<ActionResult<List<GroupPerformanceDto>>> GetSupervisedGroupsPerformance()
         {
-            var userId = int.Parse(User.FindFirstValue("UserId"));
+            var userIdClaim = User.FindFirstValue("UserId");
+            if (string.IsNullOrEmpty(userIdClaim))
+                return Unauthorized("User ID not found in token");
+            var userId = int.Parse(userIdClaim);
             return await _evaluationService.GetSupervisedGroupsPerformanceAsync(userId);
         }
 
@@ -107,7 +122,10 @@ namespace backend.Controllers
         {
             try
             {
-                var userId = int.Parse(User.FindFirstValue("UserId"));
+                var userIdClaim = User.FindFirstValue("UserId");
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return Unauthorized("User ID not found in token");
+                var userId = int.Parse(userIdClaim);
 
                 // Verify teacher is in the panel of this evaluation
                 var groupEvaluation = await _evaluationService.GetGroupEvaluationByIdAsync(id);
@@ -132,7 +150,10 @@ namespace backend.Controllers
         [HttpGet("dashboard")]
         public async Task<ActionResult<TeacherDashboardDto>> GetTeacherDashboard()
         {
-            var userId = int.Parse(User.FindFirstValue("UserId"));
+            var userIdClaim = User.FindFirstValue("UserId");
+            if (string.IsNullOrEmpty(userIdClaim))
+                return Unauthorized("User ID not found in token");
+            var userId = int.Parse(userIdClaim);
             return await _evaluationService.GetTeacherDashboardAsync(userId);
         }
 
@@ -140,11 +161,17 @@ namespace backend.Controllers
         
 
         [HttpPost("evaluate-student-with-rubric")]
-        public async Task<ActionResult<EnhancedStudentEvaluationDto>> EvaluateStudentWithRubric(EvaluateStudentDto evaluationDto)
+        public async Task<ActionResult<EnhancedStudentEvaluationDto>> EvaluateStudentWithRubric([FromBody] EvaluateStudentDto evaluationDto)
         {
             try
             {
-                var userId = int.Parse(User.FindFirstValue("UserId"));
+                var userIdClaim = User.FindFirstValue("UserId");
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return Unauthorized("User ID not found in token");
+                var userId = int.Parse(userIdClaim);
+
+                // Add logging to debug the issue
+                Console.WriteLine($"Processing evaluation from teacher {userId} for student {evaluationDto.StudentId}");
 
                 // Verify teacher is in the panel of this evaluation
                 var groupEvaluation = await _evaluationService.GetGroupEvaluationByIdAsync(evaluationDto.GroupEvaluationId);
@@ -167,6 +194,7 @@ namespace backend.Controllers
             }
             catch (ApplicationException ex)
             {
+                Console.WriteLine($"Error in EvaluateStudentWithRubric: {ex.Message}");
                 return BadRequest(ex.Message);
             }
         }
@@ -176,7 +204,10 @@ namespace backend.Controllers
         {
             try
             {
-                var userId = int.Parse(User.FindFirstValue("UserId"));
+                var userIdClaim = User.FindFirstValue("UserId");
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return Unauthorized("User ID not found in token");
+                var userId = int.Parse(userIdClaim);
 
                 var evaluation = await _evaluationService.GetGroupEvaluationByIdAsync(id);
                 if (evaluation == null)
@@ -204,7 +235,10 @@ namespace backend.Controllers
         {
             try
             {
-                var userId = int.Parse(User.FindFirstValue("UserId"));
+                var userIdClaim = User.FindFirstValue("UserId");
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return Unauthorized("User ID not found in token");
+                var userId = int.Parse(userIdClaim);
 
                 // Verify the group evaluation exists
                 var groupEvaluation = await _evaluationService.GetGroupEvaluationByIdAsync(id);
@@ -245,7 +279,10 @@ namespace backend.Controllers
         {
             try
             {
-                var userId = int.Parse(User.FindFirstValue("UserId"));
+                var userIdClaim = User.FindFirstValue("UserId");
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return Unauthorized("User ID not found in token");
+                var userId = int.Parse(userIdClaim);
 
                 // Get the evaluation
                 var evaluation = await _evaluationService.GetEvaluationByIdAsync(id);
@@ -267,5 +304,63 @@ namespace backend.Controllers
             }
         }
 
+        [HttpGet("evaluation-statistics/{groupEvaluationId}/{studentId}")]
+        public async Task<ActionResult<EvaluationStatisticsDto>> GetEvaluationStatistics(int groupEvaluationId, int studentId)
+        {
+            try
+            {
+                var userIdClaim = User.FindFirstValue("UserId");
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return Unauthorized("User ID not found in token");
+                var userId = int.Parse(userIdClaim);
+                
+                // Verify teacher is in the panel of this evaluation
+                var groupEvaluation = await _evaluationService.GetGroupEvaluationByIdAsync(groupEvaluationId);
+                if (groupEvaluation == null)
+                    return NotFound("Group evaluation not found");
+                    
+                var teacherPanels = await _panelService.GetPanelsByTeacherIdAsync(userId);
+                var panelIds = teacherPanels.Select(p => p.Id).ToList();
+                
+                if (!panelIds.Contains(groupEvaluation.PanelId))
+                    return Forbid("You are not a member of the panel for this evaluation");
+                    
+                var statistics = await _evaluationService.GetEvaluationStatisticsAsync(groupEvaluationId, studentId);
+                return Ok(statistics);
+            }
+            catch (ApplicationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("evaluate-student-with-rubric/{groupEvaluationId}/{studentId}")]
+        public async Task<ActionResult<EnhancedStudentEvaluationDto>> GetTeacherEvaluation(int groupEvaluationId, int studentId)
+        {
+            try
+            {
+                var userIdClaim = User.FindFirstValue("UserId");
+                if (string.IsNullOrEmpty(userIdClaim))
+                    return Unauthorized("User ID not found in token");
+                var userId = int.Parse(userIdClaim);
+                
+                // Add debug logging
+                Console.WriteLine($"Teacher {userId} requesting evaluation for student {studentId} in group evaluation {groupEvaluationId}");
+                
+                // Get the teacher's evaluation specifically
+                var teacherEvaluation = await _evaluationService.GetTeacherEvaluationForStudentAsync(
+                    userId, groupEvaluationId, studentId);
+                
+                // More logging
+                Console.WriteLine($"Returning evaluation with {teacherEvaluation.CategoryScores?.Count ?? 0} category scores");
+                
+                return Ok(teacherEvaluation);
+            }
+            catch (ApplicationException ex)
+            {
+                Console.WriteLine($"Error in GetTeacherEvaluation: {ex.Message}");
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
