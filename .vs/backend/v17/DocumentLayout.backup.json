@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "F:\\ProjectGo_FinalVer\\ProjectGo_svc\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|f:\\projectgo_finalver\\projectgo_svc\\infrastructure\\repositories\\evaluationrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:infrastructure\\repositories\\evaluationrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|f:\\projectgo_finalver\\projectgo_svc\\migrations\\20250423184256_updatestudentcategoryscoresconstraint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:migrations\\20250423184256_updatestudentcategoryscoresconstraint.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -33,10 +37,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|f:\\projectgo_finalver\\projectgo_svc\\migrations\\20250421120950_addedstudentevalcount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:migrations\\20250421120950_addedstudentevalcount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|f:\\projectgo_finalver\\projectgo_svc\\infrastructure\\repositories\\evaluationrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|solutionrelative:infrastructure\\repositories\\evaluationrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{251581A4-74D8-4E21-86AD-7960392B7F59}|backend.csproj|f:\\projectgo_finalver\\projectgo_svc\\backend.http||{5703B403-55E7-4C63-8C88-A8F52C7A45C5}",
@@ -367,7 +367,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 1531,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
@@ -383,38 +383,12 @@
               "IsPinned": true
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "20250423184256_UpdateStudentCategoryScoresConstraint.cs",
-              "DocumentMoniker": "F:\\ProjectGo_FinalVer\\ProjectGo_svc\\Migrations\\20250423184256_UpdateStudentCategoryScoresConstraint.cs",
-              "RelativeDocumentMoniker": "Migrations\\20250423184256_UpdateStudentCategoryScoresConstraint.cs",
-              "ToolTip": "F:\\ProjectGo_FinalVer\\ProjectGo_svc\\Migrations\\20250423184256_UpdateStudentCategoryScoresConstraint.cs",
-              "RelativeToolTip": "Migrations\\20250423184256_UpdateStudentCategoryScoresConstraint.cs",
-              "ViewState": "AgIAAA0AAAAAAAAAAAAiwCYAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-23T18:43:00.629Z",
-              "EditorCaption": ""
-            },
-            {
               "$type": "Bookmark",
               "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "AppDbContext.cs",
-              "DocumentMoniker": "F:\\ProjectGo_FinalVer\\ProjectGo_svc\\Infrastructure\\Data\\AppDbContext.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Data\\AppDbContext.cs",
-              "ToolTip": "F:\\ProjectGo_FinalVer\\ProjectGo_svc\\Infrastructure\\Data\\AppDbContext.cs",
-              "RelativeToolTip": "Infrastructure\\Data\\AppDbContext.cs",
-              "ViewState": "AgIAAIwAAAAAAAAAAAAYwKAAAAAVAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-17T18:33:59.142Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "IEvaluationService.cs",
               "DocumentMoniker": "F:\\ProjectGo_FinalVer\\ProjectGo_svc\\Infrastructure\\Services\\Contracts\\IEvaluationService.cs",
               "RelativeDocumentMoniker": "Infrastructure\\Services\\Contracts\\IEvaluationService.cs",
@@ -426,7 +400,45 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "EvaluationRepository.cs",
+              "DocumentMoniker": "F:\\ProjectGo_FinalVer\\ProjectGo_svc\\Infrastructure\\Repositories\\EvaluationRepository.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Repositories\\EvaluationRepository.cs",
+              "ToolTip": "F:\\ProjectGo_FinalVer\\ProjectGo_svc\\Infrastructure\\Repositories\\EvaluationRepository.cs",
+              "RelativeToolTip": "Infrastructure\\Repositories\\EvaluationRepository.cs",
+              "ViewState": "AgIAAJYAAAAAAAAAAAAowKQAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-21T10:31:35.444Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "20250423184256_UpdateStudentCategoryScoresConstraint.cs",
+              "DocumentMoniker": "F:\\ProjectGo_FinalVer\\ProjectGo_svc\\Migrations\\20250423184256_UpdateStudentCategoryScoresConstraint.cs",
+              "RelativeDocumentMoniker": "Migrations\\20250423184256_UpdateStudentCategoryScoresConstraint.cs",
+              "ToolTip": "F:\\ProjectGo_FinalVer\\ProjectGo_svc\\Migrations\\20250423184256_UpdateStudentCategoryScoresConstraint.cs",
+              "RelativeToolTip": "Migrations\\20250423184256_UpdateStudentCategoryScoresConstraint.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAiwBMAAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-23T18:43:00.629Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 2,
+              "Title": "AppDbContext.cs",
+              "DocumentMoniker": "F:\\ProjectGo_FinalVer\\ProjectGo_svc\\Infrastructure\\Data\\AppDbContext.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Data\\AppDbContext.cs",
+              "ToolTip": "F:\\ProjectGo_FinalVer\\ProjectGo_svc\\Infrastructure\\Data\\AppDbContext.cs",
+              "RelativeToolTip": "Infrastructure\\Data\\AppDbContext.cs",
+              "ViewState": "AgIAAIwAAAAAAAAAAAAYwKAAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-17T18:33:59.142Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "EvaluationService.cs",
               "DocumentMoniker": "F:\\ProjectGo_FinalVer\\ProjectGo_svc\\Infrastructure\\Services\\EvaluationService.cs",
               "RelativeDocumentMoniker": "Infrastructure\\Services\\EvaluationService.cs",
@@ -434,12 +446,11 @@
               "RelativeToolTip": "Infrastructure\\Services\\EvaluationService.cs",
               "ViewState": "AgIAALwFAAAAAAAAAAAAADEDAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-21T10:33:02.29Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-21T10:33:02.29Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "StudentEvaluationController.cs",
               "DocumentMoniker": "F:\\ProjectGo_FinalVer\\ProjectGo_svc\\Controllers\\StudentEvaluationController.cs",
               "RelativeDocumentMoniker": "Controllers\\StudentEvaluationController.cs",
@@ -447,12 +458,11 @@
               "RelativeToolTip": "Controllers\\StudentEvaluationController.cs",
               "ViewState": "AgIAAE4AAAAAAAAAAAAowGQAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-21T10:25:02.075Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-21T10:25:02.075Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "TeacherEvaluationController.cs",
               "DocumentMoniker": "F:\\ProjectGo_FinalVer\\ProjectGo_svc\\Controllers\\TeacherEvaluationController.cs",
               "RelativeDocumentMoniker": "Controllers\\TeacherEvaluationController.cs",
@@ -464,7 +474,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "StudentEvaluation.cs",
               "DocumentMoniker": "F:\\ProjectGo_FinalVer\\ProjectGo_svc\\Core\\Entities\\PanelManagement\\StudentEvaluation.cs",
               "RelativeDocumentMoniker": "Core\\Entities\\PanelManagement\\StudentEvaluation.cs",
@@ -476,7 +486,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "20250421120950_AddedStudentEvalCount.cs",
               "DocumentMoniker": "F:\\ProjectGo_FinalVer\\ProjectGo_svc\\Migrations\\20250421120950_AddedStudentEvalCount.cs",
               "RelativeDocumentMoniker": "Migrations\\20250421120950_AddedStudentEvalCount.cs",
@@ -497,18 +507,6 @@
               "ViewState": "AgIAAO0AAAAAAAAAAAAUwAUBAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-21T10:54:42.711Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "EvaluationRepository.cs",
-              "DocumentMoniker": "F:\\ProjectGo_FinalVer\\ProjectGo_svc\\Infrastructure\\Repositories\\EvaluationRepository.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\Repositories\\EvaluationRepository.cs",
-              "ToolTip": "F:\\ProjectGo_FinalVer\\ProjectGo_svc\\Infrastructure\\Repositories\\EvaluationRepository.cs",
-              "RelativeToolTip": "Infrastructure\\Repositories\\EvaluationRepository.cs",
-              "ViewState": "AgIAACIBAAAAAAAAAAAmwCwBAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-21T10:31:35.444Z"
             },
             {
               "$type": "Document",

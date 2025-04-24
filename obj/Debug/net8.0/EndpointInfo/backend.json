@@ -2548,6 +2548,11 @@
           "weightedScore": {
             "type": "number",
             "format": "double"
+          },
+          "requiredEvaluatorsCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false

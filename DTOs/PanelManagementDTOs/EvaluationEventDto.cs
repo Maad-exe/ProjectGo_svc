@@ -110,6 +110,10 @@ namespace backend.DTOs.PanelManagementDTOs
         public List<CategoryScoreDetailDto> CategoryScores { get; set; } = new List<CategoryScoreDetailDto>();
         public List<EvaluatorDto> Evaluators { get; set; } = new List<EvaluatorDto>();
         public double WeightedScore { get; set; } // Weighted score considering event weight
+     // Add this property to fix the error  
+    public int? RequiredEvaluatorsCount { get; set; }
+
+   
     }
 
     public class CategoryScoreDetailDto

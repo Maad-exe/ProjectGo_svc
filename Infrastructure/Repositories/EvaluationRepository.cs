@@ -151,11 +151,21 @@ namespace backend.Infrastructure.Repositories
 
         public async Task<bool> HasTeacherEvaluatedStudentAsync(int teacherId, int studentEvaluationId)
         {
-            var studentEvaluation = await _context.StudentEvaluations
+            // For rubric-based evaluations
+            var categoryScores = await _context.StudentCategoryScores
+                .Where(s => s.StudentEvaluationId == studentEvaluationId && s.EvaluatorId == teacherId)
+                .ToListAsync();
+                
+            if (categoryScores.Any())
+                return true;
+                
+            // For simple evaluations (non-rubric)
+            var evaluation = await _context.StudentEvaluations
                 .Include(se => se.Evaluators)
                 .FirstOrDefaultAsync(se => se.Id == studentEvaluationId);
-
-            return studentEvaluation?.Evaluators.Any(t => t.Id == teacherId) ?? false;
+                
+            // Check if this teacher is in the evaluators collection
+            return evaluation != null && evaluation.Evaluators.Any(e => e.Id == teacherId);
         }
 
         public async Task<List<Teacher>> GetEvaluatorsByStudentEvaluationIdAsync(int studentEvaluationId)
