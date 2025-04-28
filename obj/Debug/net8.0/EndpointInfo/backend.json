@@ -2583,6 +2583,10 @@
               "$ref": "#/components/schemas/CategoryScoreDto"
             },
             "nullable": true
+          },
+          "evaluatorId": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -2722,6 +2726,13 @@
           "name": {
             "type": "string",
             "nullable": true
+          },
+          "hasEvaluated": {
+            "type": "boolean"
+          },
+          "score": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

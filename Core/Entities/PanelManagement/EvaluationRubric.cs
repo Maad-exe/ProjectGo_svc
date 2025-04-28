@@ -27,8 +27,8 @@ namespace backend.Core.Entities.PanelManagement
         public int Id { get; set; }
         public int StudentEvaluationId { get; set; }
         public StudentEvaluation StudentEvaluation { get; set; } = null!;
-        public int CategoryId { get; set; }
-        public RubricCategory Category { get; set; } = null!;
+        public int? CategoryId { get; set; } // Make nullable
+        public RubricCategory? Category { get; set; } // Make nullable
         public int Score { get; set; }
         public string Feedback { get; set; } = string.Empty;
         public int EvaluatorId { get; set; } // Teacher ID who evaluated this category

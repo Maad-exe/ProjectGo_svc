@@ -92,6 +92,9 @@ namespace backend.DTOs.PanelManagementDTOs
 
         // For rubric-based evaluation
         public List<CategoryScoreDto>? CategoryScores { get; set; }
+        
+        // Add evaluator ID for tracking who submitted the evaluation
+        public int EvaluatorId { get; set; }
     }
     public class CategoryScoreDto
     {
@@ -133,6 +136,8 @@ namespace backend.DTOs.PanelManagementDTOs
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
+        public bool HasEvaluated { get; set; }
+        public int Score { get; set; }
     }
 
     public class EventEvaluationTypeDto

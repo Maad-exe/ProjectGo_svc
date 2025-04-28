@@ -382,7 +382,7 @@ namespace backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("EvaluatedAt")
@@ -406,7 +406,8 @@ namespace backend.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("StudentEvaluationId", "CategoryId", "EvaluatorId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[CategoryId] IS NOT NULL");
 
                     b.ToTable("StudentCategoryScores");
                 });
@@ -709,8 +710,7 @@ namespace backend.Migrations
                     b.HasOne("backend.Core.Entities.PanelManagement.RubricCategory", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("StudentEvaluation", "StudentEvaluation")
                         .WithMany("CategoryScores")

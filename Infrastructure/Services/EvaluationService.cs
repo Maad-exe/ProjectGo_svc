@@ -278,56 +278,125 @@ namespace backend.Infrastructure.Services
             if (groupEvaluation == null)
                 throw new ApplicationException($"Group evaluation with ID {evaluationDto.GroupEvaluationId} not found");
 
-            var student = await _unitOfWork.Students.GetStudentByIdAsync(evaluationDto.StudentId);
-            if (student == null)
-                throw new ApplicationException($"Student with ID {evaluationDto.StudentId} not found");
-
-            var studentInGroup = groupEvaluation.Group.Members.Any(m => m.StudentId == evaluationDto.StudentId);
-            if (!studentInGroup)
-                throw new ApplicationException("Student is not a member of the group being evaluated");
-
-            if (evaluationDto.ObtainedMarks < 0 || evaluationDto.ObtainedMarks > groupEvaluation.Event.TotalMarks)
+            // Ensure the evaluation marks are valid
+            if (!evaluationDto.ObtainedMarks.HasValue || evaluationDto.ObtainedMarks < 0 || 
+                evaluationDto.ObtainedMarks > groupEvaluation.Event.TotalMarks)
                 throw new ApplicationException($"Marks must be between 0 and {groupEvaluation.Event.TotalMarks}");
 
             var existingEvaluation = groupEvaluation.StudentEvaluations
                 .FirstOrDefault(se => se.StudentId == evaluationDto.StudentId);
 
-            if (existingEvaluation != null)
-                throw new ApplicationException("Student has already been evaluated for this event");
-
-            var studentEvaluation = new StudentEvaluation
+            // Create new evaluation if it doesn't exist
+            if (existingEvaluation == null)
             {
-                GroupEvaluationId = evaluationDto.GroupEvaluationId,
-                StudentId = evaluationDto.StudentId,
-                ObtainedMarks = evaluationDto.ObtainedMarks ?? 0,
-                Feedback = evaluationDto.Feedback ?? string.Empty,
-                EvaluatedAt = DateTime.Now
-            };
+                var studentEvaluation = new StudentEvaluation
+                {
+                    GroupEvaluationId = evaluationDto.GroupEvaluationId,
+                    StudentId = evaluationDto.StudentId,
+                    ObtainedMarks = evaluationDto.ObtainedMarks ?? 0,
+                    Feedback = evaluationDto.Feedback ?? string.Empty,
+                    EvaluatedAt = DateTime.Now,
+                    RequiredEvaluatorsCount = groupEvaluation.Panel.Members.Count
+                };
 
-            var createdEvaluation = await _unitOfWork.Evaluations.EvaluateStudentAsync(studentEvaluation);
-
-            var groupMembers = groupEvaluation.Group.Members.Count();
-            var evaluatedStudents = groupEvaluation.StudentEvaluations.Count() + 1;
-
-            if (groupMembers == evaluatedStudents)
-            {
-                groupEvaluation.IsCompleted = true;
+                var createdEvaluation = await _unitOfWork.Evaluations.EvaluateStudentAsync(studentEvaluation);
+                
+                // Add the evaluator to the student evaluation
+                await _unitOfWork.Evaluations.AddEvaluatorToStudentEvaluationAsync(studentEvaluation.Id, evaluationDto.EvaluatorId);
+                
+                // Create a simple score entry
+                var simpleScore = new StudentCategoryScore
+                {
+                    StudentEvaluationId = studentEvaluation.Id,
+                    CategoryId = null,  // Use null to indicate it's a simple evaluation instead of 0
+                    Score = evaluationDto.ObtainedMarks.Value,
+                    Feedback = evaluationDto.Feedback ?? string.Empty,
+                    EvaluatorId = evaluationDto.EvaluatorId,
+                    EvaluatedAt = DateTime.UtcNow
+                };
+                
+                studentEvaluation.CategoryScores.Add(simpleScore);
                 await _unitOfWork.SaveChangesAsync();
+                
+                return await MapToStudentEvaluationDtoAsync(studentEvaluation);
             }
             else
             {
+                // Check if this evaluator has already evaluated this student
+                var hasEvaluated = await _unitOfWork.Evaluations.HasTeacherEvaluatedStudentAsync(
+                    evaluationDto.EvaluatorId, existingEvaluation.Id);
+                    
+                if (hasEvaluated)
+                {
+                    // Update existing score
+                    var existingScore = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAndEvaluatorIdAsync(
+                        existingEvaluation.Id, evaluationDto.EvaluatorId);
+                        
+                    var simpleScore = existingScore.FirstOrDefault(s => s.CategoryId == null);
+                    
+                    if (simpleScore != null)
+                    {
+                        simpleScore.Score = evaluationDto.ObtainedMarks.Value;
+                        simpleScore.Feedback = evaluationDto.Feedback ?? string.Empty;
+                        simpleScore.EvaluatedAt = DateTime.UtcNow;
+                    }
+                    else
+                    {
+                        // Add a new score for this evaluator
+                        var newScore = new StudentCategoryScore
+                        {
+                            StudentEvaluationId = existingEvaluation.Id,
+                            CategoryId = null,
+                            Score = evaluationDto.ObtainedMarks.Value,
+                            Feedback = evaluationDto.Feedback ?? string.Empty,
+                            EvaluatorId = evaluationDto.EvaluatorId,
+                            EvaluatedAt = DateTime.UtcNow
+                        };
+                        
+                        existingEvaluation.CategoryScores.Add(newScore);
+                    }
+                    
+                    await _unitOfWork.SaveChangesAsync();
+                }
+                else
+                {
+                    // Add the evaluator to the student evaluation
+                    await _unitOfWork.Evaluations.AddEvaluatorToStudentEvaluationAsync(
+                        existingEvaluation.Id, evaluationDto.EvaluatorId);
+                        
+                    // Add a new score for this evaluator
+                    var newScore = new StudentCategoryScore
+                    {
+                        StudentEvaluationId = existingEvaluation.Id,
+                        CategoryId = null,
+                        Score = evaluationDto.ObtainedMarks.Value,
+                        Feedback = evaluationDto.Feedback ?? string.Empty,
+                        EvaluatorId = evaluationDto.EvaluatorId,
+                        EvaluatedAt = DateTime.UtcNow
+                    };
+                    
+                    existingEvaluation.CategoryScores.Add(newScore);
+                    await _unitOfWork.SaveChangesAsync();
+                }
+                
+                // Recalculate the obtained marks based on all evaluators
+                var allScores = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAsync(existingEvaluation.Id);
+                existingEvaluation.ObtainedMarks = allScores != null && allScores.Any()
+                    ? (int)Math.Round(allScores.Average(s => s.Score))
+                    : 0;
+                
+                // Check if all required evaluators have completed their evaluations
+                var uniqueEvaluators = await _unitOfWork.Rubrics.GetUniqueEvaluatorsCountForStudentEvaluationAsync(existingEvaluation.Id);
+                if (uniqueEvaluators >= existingEvaluation.RequiredEvaluatorsCount && !existingEvaluation.IsComplete)
+                {
+                    existingEvaluation.IsComplete = true;
+                    await CompileAndUpdateFeedbackAsync(existingEvaluation.Id);
+                }
+                
                 await _unitOfWork.SaveChangesAsync();
+                
+                return await MapToStudentEvaluationDtoAsync(existingEvaluation);
             }
-
-            return new StudentEvaluationDto
-            {
-                Id = createdEvaluation.Id,
-                StudentId = student.Id,
-                StudentName = student.FullName,
-                ObtainedMarks = createdEvaluation.ObtainedMarks,
-                Feedback = createdEvaluation.Feedback,
-                EvaluatedAt = createdEvaluation.EvaluatedAt
-            };
         }
 
         public async Task<List<StudentEvaluationDto>> GetStudentEvaluationsByGroupEvaluationIdAsync(int groupEvaluationId)
@@ -843,7 +912,7 @@ namespace backend.Infrastructure.Services
                 var simpleScore = new StudentCategoryScore
                 {
                     StudentEvaluationId = studentEvaluation.Id,
-                    CategoryId = 0,
+                    CategoryId = null,
                     Score = evaluationDto.ObtainedMarks.Value,
                     Feedback = evaluationDto.Feedback ?? string.Empty,
                     EvaluatorId = teacherId,
@@ -853,7 +922,7 @@ namespace backend.Infrastructure.Services
                 var existingSimpleScore = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAndEvaluatorIdAsync(
                     studentEvaluation.Id, teacherId);
 
-                var existingScore = existingSimpleScore.FirstOrDefault(s => s.CategoryId == 0);
+                var existingScore = existingSimpleScore.FirstOrDefault(s => s.CategoryId == null);
 
                 if (existingScore != null)
                 {
@@ -876,7 +945,9 @@ namespace backend.Infrastructure.Services
                     studentEvaluation.IsComplete = true;
 
                     var allScores = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAsync(studentEvaluation.Id);
-                    studentEvaluation.ObtainedMarks = (int)Math.Round(allScores.Average(s => s.Score));
+                    studentEvaluation.ObtainedMarks = allScores != null && allScores.Any()
+                        ? (int)Math.Round(allScores.Average(s => s.Score))
+                        : 0;
 
                     await _unitOfWork.SaveChangesAsync();
                 }
@@ -885,63 +956,85 @@ namespace backend.Infrastructure.Services
             return await MapToEnhancedStudentEvaluationDtoAsync(studentEvaluation);
         }
 
-      private async Task CompileAndUpdateFeedbackAsync(int studentEvaluationId)
-{
-    var studentEvaluation = await _unitOfWork.Evaluations.GetStudentEvaluationByIdAsync(studentEvaluationId);
-    if (studentEvaluation == null) return;
-
-    var categoryScores = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAsync(studentEvaluationId);
-    if (categoryScores == null || !categoryScores.Any()) return;
-
-    var evaluators = await _unitOfWork.Evaluations.GetEvaluatorsByStudentEvaluationIdAsync(studentEvaluationId);
-    if (evaluators == null || !evaluators.Any()) return;
-
-    var feedbackByEvaluator = new Dictionary<int, List<string>>();
-    var evaluatorMap = new Dictionary<int, string>();
-    
-    // Create evaluator name map
-    foreach (var evaluator in evaluators)
-    {
-        feedbackByEvaluator[evaluator.Id] = new List<string>();
-        evaluatorMap[evaluator.Id] = evaluator.FullName;
-    }
-
-    foreach (var score in categoryScores.Where(s => !string.IsNullOrEmpty(s.Feedback)))
-    {
-        if (!feedbackByEvaluator.ContainsKey(score.EvaluatorId))
-            feedbackByEvaluator[score.EvaluatorId] = new List<string>();
-
-        var category = score.Category;
-
-        if (category != null)
+        private async Task CompileAndUpdateFeedbackAsync(int studentEvaluationId)
         {
-            feedbackByEvaluator[score.EvaluatorId].Add($"{category.Name}: {score.Feedback}");
+            var studentEvaluation = await _unitOfWork.Evaluations.GetStudentEvaluationByIdAsync(studentEvaluationId);
+            if (studentEvaluation == null) return;
+
+            var categoryScores = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAsync(studentEvaluationId);
+            if (categoryScores == null || !categoryScores.Any()) return;
+
+            var evaluators = await _unitOfWork.Evaluations.GetEvaluatorsByStudentEvaluationIdAsync(studentEvaluationId);
+            if (evaluators == null || !evaluators.Any()) return;
+
+            var feedbackByEvaluator = new Dictionary<int, List<string>>();
+            var evaluatorMap = new Dictionary<int, string>();
+            
+            // Create evaluator name map
+            foreach (var evaluator in evaluators)
+            {
+                // Ensure we have a full name for every evaluator
+                var teacherInfo = await _unitOfWork.Teachers.GetTeacherByIdAsync(evaluator.Id);
+                evaluatorMap[evaluator.Id] = teacherInfo?.FullName ?? $"Evaluator {evaluator.Id}";
+                feedbackByEvaluator[evaluator.Id] = new List<string>();
+            }
+
+            foreach (var score in categoryScores.Where(s => s.EvaluatorId > 0))
+            {
+                if (!feedbackByEvaluator.ContainsKey(score.EvaluatorId))
+                {
+                    feedbackByEvaluator[score.EvaluatorId] = new List<string>();
+                    
+                    // If this evaluator wasn't in our original list, fetch their name
+                    if (!evaluatorMap.ContainsKey(score.EvaluatorId))
+                    {
+                        var teacherInfo = await _unitOfWork.Teachers.GetTeacherByIdAsync(score.EvaluatorId);
+                        evaluatorMap[score.EvaluatorId] = teacherInfo?.FullName ?? $"Evaluator {score.EvaluatorId}";
+                    }
+                }
+
+                var category = score.Category;
+                var feedbackText = score.Feedback ?? string.Empty;
+
+                // Ensure feedback is meaningful - we'll include the score
+                if (!string.IsNullOrWhiteSpace(feedbackText))
+                {
+                    if (category != null)
+                    {
+                        feedbackByEvaluator[score.EvaluatorId].Add($"{category.Name}: {feedbackText}");
+                    }
+                    else
+                    {
+                        feedbackByEvaluator[score.EvaluatorId].Add($"{score.Score} - {feedbackText}");
+                    }
+                }
+                else
+                {
+                    // If no feedback provided, at least include the score
+                    feedbackByEvaluator[score.EvaluatorId].Add($"Score: {score.Score}");
+                }
+            }
+
+            // Compile feedback with evaluator names
+            var compiledFeedback = new StringBuilder();
+            foreach (var kvp in feedbackByEvaluator)
+            {
+                if (!kvp.Value.Any()) continue;
+
+                var evaluatorName = evaluatorMap.ContainsKey(kvp.Key) ? evaluatorMap[kvp.Key] : $"Evaluator {kvp.Key}";
+                compiledFeedback.AppendLine($"Feedback from {evaluatorName}:");
+                
+                foreach (var feedback in kvp.Value)
+                {
+                    compiledFeedback.AppendLine($"- {feedback}");
+                }
+                compiledFeedback.AppendLine();
+            }
+
+            studentEvaluation.Feedback = compiledFeedback.ToString().Trim();
+            await _unitOfWork.SaveChangesAsync();
         }
-        else
-        {
-            feedbackByEvaluator[score.EvaluatorId].Add(score.Feedback);
-        }
-    }
 
-    var compiledFeedback = new StringBuilder();
-    foreach (var kvp in feedbackByEvaluator)
-    {
-        if (!kvp.Value.Any()) continue;
-
-        // Use evaluator name from our map
-        var evaluatorName = evaluatorMap.ContainsKey(kvp.Key) ? evaluatorMap[kvp.Key] : "Unknown Evaluator";
-
-        compiledFeedback.AppendLine($"Feedback from {evaluatorName}:");
-        foreach (var feedback in kvp.Value)
-        {
-            compiledFeedback.AppendLine($"- {feedback}");
-        }
-        compiledFeedback.AppendLine();
-    }
-
-    studentEvaluation.Feedback = compiledFeedback.ToString().Trim();
-    await _unitOfWork.SaveChangesAsync();
-}
         private async Task CalculateObtainedMarksFromCategoryScores(int studentEvaluationId, EvaluationEvent evaluationEvent)
         {
             var studentEvaluation = await _unitOfWork.Evaluations.GetStudentEvaluationByIdAsync(studentEvaluationId);
@@ -1021,11 +1114,31 @@ namespace backend.Infrastructure.Services
                 ? (evaluation.ObtainedMarks * 100.0 * eventWeight) / totalMarks
                 : 0;
 
-            // Get all evaluators first from categories to ensure we have all evaluator IDs
+            // Get all evaluators first from both categories scores and direct evaluators
             var allCategoryScores = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAsync(evaluation.Id);
-            var allEvaluatorIds = allCategoryScores?.Select(s => s.EvaluatorId).Distinct().ToList() ?? new List<int>();
             
-            // Create a mapping of evaluator IDs to their full names to use throughout the method
+            // Get the formal list of evaluators that have been attached to this evaluation
+            var evaluators = await _unitOfWork.Evaluations.GetEvaluatorsByStudentEvaluationIdAsync(evaluation.Id);
+            
+            // Create a combined list of all possible evaluator IDs
+            var allEvaluatorIds = new HashSet<int>();
+            
+            // Add all evaluators from category scores
+            if (allCategoryScores != null)
+            {
+                foreach (var score in allCategoryScores)
+                {
+                    allEvaluatorIds.Add(score.EvaluatorId);
+                }
+            }
+            
+            // Add all formal evaluators
+            foreach (var evaluator in evaluators)
+            {
+                allEvaluatorIds.Add(evaluator.Id);
+            }
+            
+            // Create a mapping of evaluator IDs to their full names
             var evaluatorMap = new Dictionary<int, string>();
             foreach (var evaluatorId in allEvaluatorIds)
             {
@@ -1036,11 +1149,11 @@ namespace backend.Infrastructure.Services
                 }
                 else
                 {
-                    evaluatorMap[evaluatorId] = "Unknown";
+                    evaluatorMap[evaluatorId] = $"Evaluator {evaluatorId}"; // Default name if not found
                 }
             }
 
-            // Create the DTO with basic properties
+            // Create the DTO with empty collections initially
             var dto = new EnhancedStudentEvaluationDto
             {
                 Id = evaluation.Id,
@@ -1056,16 +1169,29 @@ namespace backend.Infrastructure.Services
                 WeightedScore = weightedScore,
                 CategoryScores = new List<CategoryScoreDetailDto>(),
                 Evaluators = new List<EvaluatorDto>(),
-                RequiredEvaluatorsCount = panel?.Members?.Count ?? 3  // Set required evaluator count from panel
+                RequiredEvaluatorsCount = panel?.Members?.Count ?? 3
             };
 
-            // Add all evaluators who have provided any scores
+            // Add all evaluators to the result, with correct status based on scores
             foreach (var evaluatorId in allEvaluatorIds)
             {
+                var hasEvaluated = allCategoryScores != null && 
+                    allCategoryScores.Any(s => s.EvaluatorId == evaluatorId);
+                    
+                var evaluatorScores = allCategoryScores?
+                    .Where(s => s.EvaluatorId == evaluatorId)
+                    .ToList();
+                    
+                var averageScore = evaluatorScores != null && evaluatorScores.Any()
+                    ? (int)Math.Round(evaluatorScores.Average(s => s.Score))
+                    : 0;
+                    
                 dto.Evaluators.Add(new EvaluatorDto
                 {
                     Id = evaluatorId,
-                    Name = evaluatorMap[evaluatorId]
+                    Name = evaluatorMap.ContainsKey(evaluatorId) ? evaluatorMap[evaluatorId] : $"Evaluator {evaluatorId}",
+                    HasEvaluated = hasEvaluated,
+                    Score = averageScore
                 });
             }
 
@@ -1088,7 +1214,9 @@ namespace backend.Infrastructure.Services
                         var firstScore = categoryGroup.First();
                         var category = firstScore.Category;
 
-                        double averageScore = categoryGroup.Average(s => s.Score);
+                        double averageScore = categoryGroup.Any() 
+                            ? categoryGroup.Average(s => s.Score)
+                            : 0;
                         var categoryWeight = category?.Weight ?? 0;
                         var categoryMaxScore = category?.MaxScore ?? 1;
 
@@ -1131,6 +1259,28 @@ namespace backend.Infrastructure.Services
                         dto.CategoryScores.Add(categoryDto);
                     }
                 }
+            }
+
+            var evaluatorIds = await _unitOfWork.Evaluations.GetEvaluatorsByStudentEvaluationIdAsync(evaluation.Id);
+            var allScores = await _unitOfWork.Rubrics.GetScoresByStudentEvaluationIdAsync(evaluation.Id);
+            
+            // Add evaluators with correct status to the result
+            foreach (var evaluator in evaluatorIds)
+            {
+                var hasEvaluated = allScores != null && 
+                    allScores.Any(s => s.EvaluatorId == evaluator.Id);
+                    
+                var evaluatorScore = allScores
+                    ?.Where(s => s.EvaluatorId == evaluator.Id)
+                    ?.Average(s => s.Score) ?? 0;
+                    
+                dto.Evaluators.Add(new EvaluatorDto
+                {
+                    Id = evaluator.Id,
+                    Name = evaluator.FullName,
+                    HasEvaluated = hasEvaluated, // Properly mark as evaluated
+                    Score = (int)evaluatorScore
+                });
             }
 
             return dto;
@@ -1279,7 +1429,9 @@ namespace backend.Infrastructure.Services
             }
             else
             {
-                evaluation.ObtainedMarks = (int)Math.Round(allScores.Average(s => s.Score));
+                evaluation.ObtainedMarks = allScores != null && allScores.Any()
+                    ? (int)Math.Round(allScores.Average(s => s.Score))
+                    : 0;
             }
         }
 
@@ -1503,6 +1655,29 @@ namespace backend.Infrastructure.Services
             resultDto.IsComplete = studentEvaluation.IsComplete;
 
             return resultDto;
+        }
+
+        private async Task<StudentEvaluationDto> MapToStudentEvaluationDtoAsync(StudentEvaluation evaluation)
+        {
+            var student = await _unitOfWork.Students.GetStudentByIdAsync(evaluation.StudentId);
+            var groupEvaluation = await _unitOfWork.Evaluations.GetGroupEvaluationByIdAsync(evaluation.GroupEvaluationId);
+
+            return new StudentEvaluationDto
+            {
+                Id = evaluation.Id,
+                StudentId = evaluation.StudentId,
+                StudentName = student?.FullName ?? "Unknown",
+                ObtainedMarks = evaluation.ObtainedMarks,
+                Feedback = evaluation.Feedback,
+                EvaluatedAt = evaluation.EvaluatedAt,
+                IsComplete = evaluation.IsComplete,
+                EventName = groupEvaluation?.Event?.Name,
+                EventDate = groupEvaluation?.Event?.Date,
+                TotalMarks = groupEvaluation?.Event?.TotalMarks,
+                PercentageObtained = groupEvaluation?.Event?.TotalMarks > 0 
+                    ? (evaluation.ObtainedMarks * 100M) / groupEvaluation.Event.TotalMarks 
+                    : 0
+            };
         }
     }
 }
