@@ -115,6 +115,7 @@ namespace backend.DTOs.PanelManagementDTOs
         public double WeightedScore { get; set; } // Weighted score considering event weight
      // Add this property to fix the error  
     public int? RequiredEvaluatorsCount { get; set; }
+    public double? EventWeight { get; set; } // Weight of the event in the overall evaluation
 
    
     }

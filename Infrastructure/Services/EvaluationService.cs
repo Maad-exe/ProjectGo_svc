@@ -1169,7 +1169,8 @@ namespace backend.Infrastructure.Services
                 WeightedScore = weightedScore,
                 CategoryScores = new List<CategoryScoreDetailDto>(),
                 Evaluators = new List<EvaluatorDto>(),
-                RequiredEvaluatorsCount = panel?.Members?.Count ?? 3
+                RequiredEvaluatorsCount = panel?.Members?.Count ?? 3,
+                EventWeight = eventWeight,
             };
 
             // Add all evaluators to the result, with correct status based on scores
